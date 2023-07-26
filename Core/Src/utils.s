@@ -1,7 +1,7 @@
 .syntax unified
 
 .global Delay_Handler
-@ .global Delay
+.global _Delay
 
 
     .section  .text.Delay_Handler
@@ -15,16 +15,16 @@ Delay_Handler:
   .size  Delay_Handler, .-Delay_Handler
 
 
-@ @ TODO overfload bug
-@     .section  .text.Delay
-@     .type Delay, %function
-@ Delay:
-@   ldr r1, =208000
-@   muls r0, r0, r1
-@   _LOOP_:
-@     sbcs r0, r0, 1
-@     bpl _LOOP_
-@   bx lr
-@   .size  Delay, .-Delay
+@ TODO overfload bug
+    .section  .text._Delay
+    .type _Delay, %function
+_Delay:
+  ldr r1, =208000
+  muls r0, r0, r1
+  _LOOP_:
+    sbcs r0, r0, 1
+    bpl _LOOP_
+  bx lr
+  .size  _Delay, .-_Delay
 
 

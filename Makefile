@@ -46,6 +46,12 @@ Core/Src/led.c \
 Core/Src/d_tim.c \
 Core/Src/d_usart.c \
 Core/Src/d_led.c \
+FreeRTOS/list.c \
+FreeRTOS/queue.c \
+FreeRTOS/tasks.c \
+FreeRTOS/portable/MemMang/heap_4.c \
+FreeRTOS/portable/GCC/ARM_CM7/r0p1/port.c \
+
 
 
 # ASM sources
@@ -118,7 +124,8 @@ C_INCLUDES =  \
 -ICore/Inc \
 -IDrivers/CMSIS/Device/ST/STM32F7xx/Include \
 -IDrivers/CMSIS/Include \
--IDrivers/CMSIS/Include \
+-IFreeRTOS/include \
+-IFreeRTOS/portable/GCC/ARM_CM7/r0p1
 
 
 # compile gcc flags

@@ -31,10 +31,9 @@ extern "C" {
 #include <stdlib.h>
 #include <stdint.h>
 #include <time.h>
-//
-#include "stm32f7xx.h"
 
 /* Private includes ----------------------------------------------------------*/
+#include "stm32f7xx.h"
 #include "common.h"
 #include "stm32f7xx_it.h"
 #include "callback.h"
@@ -45,6 +44,11 @@ extern "C" {
 #include "d_tim.h"
 #include "d_usart.h"
 #include "d_led.h"
+#include "FreeRTOSConfig.h"
+/*** FtrrRTOS ***/
+#include "FreeRTOS.h"
+
+
 
 /* Exported types ------------------------------------------------------------*/
 struct __FILE {
@@ -71,22 +75,13 @@ typedef struct {
 /* Exported macro ------------------------------------------------------------*/
 
 /* Extern global variables ---------------------------------------------------*/
-extern uint32_t sysQuantum;
-extern uint32_t millis;
-extern uint32_t seconds;
-extern uint32_t minutes;
-extern uint32_t _GLOBALREG_;
 extern uint32_t SystemCoreClock;
 extern RCC_ClocksTypeDef RccClocks;
 
 /* Exported functions prototypes ---------------------------------------------*/
-extern void Delay_Handler(uint32_t delay);
-extern void Delay(uint32_t delay);
-extern void Cron_Handler(void);
+extern void _Delay(uint32_t delay);
 
 /* Private defines -----------------------------------------------------------*/
-/*** _GLOBALREG_ Flags ***/    
-#define _DELAYF_  0 // Delay handler Flag
 
 #define CCMRAM  __attribute__((section(".ccmram")))
 
@@ -94,5 +89,4 @@ extern void Cron_Handler(void);
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* __MAIN_H */

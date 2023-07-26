@@ -12,7 +12,11 @@
                 "${workspaceFolder}/Drivers/CMSIS/Include/",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F7xx/Include",
                 "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/Core/Src"
+                "${workspaceFolder}/Core/Src",
+                "${workspaceFolder}/FreeRTOS",
+                "${workspaceFolder}/FreeRTOS/include",
+                "${workspaceFolder}/FreeRTOS/portable/GCC/ARM_CM7/r0p1",
+                "${workspaceFolder}/FreeRTOS/portable/MemMang"
             ],
             "defines": [
                 "DEBUG",

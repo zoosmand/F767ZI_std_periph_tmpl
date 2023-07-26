@@ -13,27 +13,14 @@
 #include "main.h"
 
 /* Private variables ---------------------------------------------------------*/
-static uint32_t millis_tmp    = 100;
-static uint32_t seconds_tmp   = 1000;
-static uint32_t minutes_tmp   = 60;
-// static uint32_t delay_ts = 0;
 
 /* Global variables ----------------------------------------------------------*/
-uint32_t sysQuantum           = 0;
-uint32_t millis               = 0;
-uint32_t seconds              = 0;
-uint32_t minutes              = 0;
-uint32_t _GLOBALREG_          = 0;
-uint32_t delay_tmp            = 0;
-uint32_t SystemCoreClock      = 16000000;
+uint32_t SystemCoreClock = 16000000; /*!< Defaulf value on start */
 RCC_ClocksTypeDef RccClocks;
 
 /* Private function prototypes -----------------------------------------------*/
-static void CronSysQuantum_Handler(void);
-static void CronMillis_Handler(void);
-static void CronSeconds_Handler(void);
-static void CronMinutes_Handler(void);
-static void Flags_Handler(void);
+static StaticTask_t xIdleTaskTCBBuffer;
+static StackType_t xIdleStack[configMINIMAL_STACK_SIZE];
 
 /* Private functions ---------------------------------------------------------*/
 /**
@@ -42,7 +29,7 @@ static void Flags_Handler(void);
   */
 int main(void) {
 
-  Delay(500);
+  _Delay(500);
 
   /****** peripheral initialization *******************/
   /* USART */ 
@@ -52,146 +39,22 @@ int main(void) {
   /* LED */
   LED_Init();
 
+  // vTaskStartScheduler();
+  xPortStartScheduler();
 
-  while (1) {
-    Delay_Handler(0);
-    Cron_Handler();
-    Flags_Handler();
-  }
+  while (1);
 }
 
 
 
-/********************************************************************************/
-/*                                     CRON                                     */
-/********************************************************************************/
-void Cron_Handler(void) {
-  $CronStart:
-  if (SysTick->CTRL & (1 << SysTick_CTRL_COUNTFLAG_Pos)) { 
-    sysQuantum++;
-    CronSysQuantum_Handler();
-  }
-
-  if (sysQuantum >= millis_tmp) {
-    millis++;
-    millis_tmp = sysQuantum + 100;
-    CronMillis_Handler();
-  }
-  
-  if (millis >= seconds_tmp) {
-    seconds++;
-    seconds_tmp += 1000;
-    CronSeconds_Handler();
-  }
-  
-  if (seconds >= minutes_tmp) {
-    minutes++;
-    minutes_tmp += 60;
-    CronMinutes_Handler();
-  }
-
-  while (sysQuantum < delay_tmp) {
-    goto $CronStart;
-  }
-  // TODO Overload counter during a delay, a serious bug is here
-  delay_tmp = 0;
-  FLAG_CLR(_GLOBALREG_, _DELAYF_);
+void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize ) {
+  *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
+  *ppxIdleTaskStackBuffer = &xIdleStack[0];
+  *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
+  /* place for user code */
 }
 
 
-/********************************************************************************/
-/*                             CRON EVENTS HANDLERS                             */
-/********************************************************************************/
-// ---- System Quantum ---- //
-static void CronSysQuantum_Handler(void) {
-  //
-}
-
-// ---- Milliseconds ---- //
-static void CronMillis_Handler(void) {
-  Callback_Handler((void*) BlinkBlue, &millis);
-  Callback_Handler((void*) BlinkRed, &millis);
-}
-
-// ---- Seconds ---- //
-static void CronSeconds_Handler(void) {
-  /* Refresh independent watchdog */
-  IWDG->KR = IWDG_KEY_RELOAD;
-}
-
-// ---- Minutes ---- //
-static void CronMinutes_Handler(void) {
-  printf("%d seconds left since start\n", (int) seconds);
-}
-
-
-/********************************************************************************/
-/*                                     FLAGS                                    */
-/********************************************************************************/
-static void Flags_Handler(void){
-
-  /* ******** USART/UART *******************************************/
-  /* USART3 IT event  */
-  if (FLAG_CHECK(_USARTREG_, _USART_RXAF_)) {
-
-    // --------------------- Run callback --------------------------
-    UsartHandlerCallbackParams UsartToBufferParams = {
-      .usart = USART3
-    };
-    Callback_Handler((void*) UsartToBuffer, (uint32_t*) &UsartToBufferParams);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_USARTREG_, _USART_RXAF_);
-  }
-
-  /* USART3 Buffer ready to read */
-  if (FLAG_CHECK(_USARTREG_, _USART_LBRRF_)) {
-    
-    // --------------------- Run callback --------------------------
-    Callback_Handler((void*) EchoToUSART, NULL);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_USARTREG_, _USART_LBRRF_);
-  }
-
-
-  /* ******** Timers ***********************************************/
-  /* TIM6 IT event */
-  if (FLAG_CHECK(_TIMREG_, _BT6IAF_)) {
-
-    // --------------------- Run callback --------------------------
-    BasicTimerHandlerCallbackParams PingTim6Params = {
-      .tim = TIM6
-    };
-    Callback_Handler((void*) PingTim6, (uint32_t*) &PingTim6Params);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_TIMREG_, _BT6IAF_);
-  }
-
-
-  /* ******** LED *************************************************/
-  /* LED Green up Flag  */
-  if (FLAG_CHECK(_LEDREG_, _LEDGUF_)) {
-
-    // --------------------- Run callback --------------------------
-    Callback_Handler((void*) BlinkGreen, NULL);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_LEDREG_, _LEDGUF_);
-  }
-}
-
-
-/**
-  * @brief  Simple selay
-  * @param delay A value in milliseconds.
-  * @retval None
-  */
-void Delay(uint32_t delay) {
-  __IO uint64_t tmp = 40000 * delay;
-  while (tmp--);
-}
 
 
 /**
@@ -364,12 +227,12 @@ void SystemInit(void) {
 
   /*****************************************************************************************/
   /* IWDG */
-  IWDG->KR = IWDG_KEY_ENABLE;
-  IWDG->KR = IWDG_KEY_WR_ACCESS_ENABLE;
-  IWDG->PR =  IWDG_PR_PR & (IWDG_PR_PR_2 | IWDG_PR_PR_0); /*!< Divided by 128 */
-  IWDG->RLR = IWDG_RLR_RL & 624;                          /*<! ~2.5sec.  */
-  while (!(PREG_CHECK(IWDG->SR, IWDG_SR_PVU_Pos)));
-  IWDG->KR = IWDG_KEY_RELOAD;
+  // IWDG->KR = IWDG_KEY_ENABLE;
+  // IWDG->KR = IWDG_KEY_WR_ACCESS_ENABLE;
+  // IWDG->PR =  IWDG_PR_PR & (IWDG_PR_PR_2 | IWDG_PR_PR_0); /*!< Divided by 128 */
+  // IWDG->RLR = IWDG_RLR_RL & 624;                          /*<! ~2.5sec.  */
+  // while (!(PREG_CHECK(IWDG->SR, IWDG_SR_PVU_Pos)));
+  // IWDG->KR = IWDG_KEY_RELOAD;
 
   /*****************************************************************************************/
   /* Peripheral clock */
