@@ -19,8 +19,6 @@ uint32_t SystemCoreClock = 16000000; /*!< Defaulf value on start */
 RCC_ClocksTypeDef RccClocks;
 
 /* Private function prototypes -----------------------------------------------*/
-static StaticTask_t xIdleTaskTCBBuffer;
-static StackType_t xIdleStack[configMINIMAL_STACK_SIZE];
 
 /* Private functions ---------------------------------------------------------*/
 /**
@@ -40,21 +38,11 @@ int main(void) {
   LED_Init();
 
   // vTaskStartScheduler();
-  xPortStartScheduler();
+  // xPortStartScheduler();
+  FreeRTOS_Run();
 
   while (1);
 }
-
-
-
-void vApplicationGetIdleTaskMemory( StaticTask_t **ppxIdleTaskTCBBuffer, StackType_t **ppxIdleTaskStackBuffer, uint32_t *pulIdleTaskStackSize ) {
-  *ppxIdleTaskTCBBuffer = &xIdleTaskTCBBuffer;
-  *ppxIdleTaskStackBuffer = &xIdleStack[0];
-  *pulIdleTaskStackSize = configMINIMAL_STACK_SIZE;
-  /* place for user code */
-}
-
-
 
 
 /**
@@ -81,16 +69,19 @@ void SystemInit(void) {
 
   /* Set Interrupt Group Priority */
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+  // NVIC_SetPriority(PendSV_IRQn, 15);
+  NVIC_SetPriority(PendSV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
 
-  /* Conficure SysTick */
-  SET_BIT(SysTick->CTRL, (SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk));
-  SysTick->LOAD = 2160U - 1U;
-  SysTick->VAL = 0;
-  SET_BIT(SysTick->CTRL, SysTick_CTRL_ENABLE_Msk);
 
-  /* SysTick interrupt configuration */
-  NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
-  NVIC_EnableIRQ(SysTick_IRQn);
+  // /* Conficure SysTick */
+  // SET_BIT(SysTick->CTRL, (SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_TICKINT_Msk));
+  // SysTick->LOAD = 2160U - 1U;
+  // SysTick->VAL = 0;
+  // SET_BIT(SysTick->CTRL, SysTick_CTRL_ENABLE_Msk);
+
+  // /* SysTick interrupt configuration */
+  // NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+  // NVIC_EnableIRQ(SysTick_IRQn);
 
   /* SysCfg */
   PREG_SET(RCC->APB2ENR, RCC_APB2ENR_SYSCFGEN_Pos);
@@ -227,12 +218,12 @@ void SystemInit(void) {
 
   /*****************************************************************************************/
   /* IWDG */
-  // IWDG->KR = IWDG_KEY_ENABLE;
-  // IWDG->KR = IWDG_KEY_WR_ACCESS_ENABLE;
-  // IWDG->PR =  IWDG_PR_PR & (IWDG_PR_PR_2 | IWDG_PR_PR_0); /*!< Divided by 128 */
-  // IWDG->RLR = IWDG_RLR_RL & 624;                          /*<! ~2.5sec.  */
-  // while (!(PREG_CHECK(IWDG->SR, IWDG_SR_PVU_Pos)));
-  // IWDG->KR = IWDG_KEY_RELOAD;
+  IWDG->KR = IWDG_KEY_ENABLE;
+  IWDG->KR = IWDG_KEY_WR_ACCESS_ENABLE;
+  IWDG->PR =  IWDG_PR_PR & (IWDG_PR_PR_2 | IWDG_PR_PR_0); /*!< Divided by 128 */
+  IWDG->RLR = IWDG_RLR_RL & 624;                          /*<! ~2.5sec.  */
+  while (!(PREG_CHECK(IWDG->SR, IWDG_SR_PVU_Pos)));
+  IWDG->KR = IWDG_KEY_RELOAD;
 
   /*****************************************************************************************/
   /* Peripheral clock */

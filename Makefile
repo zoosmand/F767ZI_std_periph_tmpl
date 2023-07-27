@@ -43,15 +43,20 @@ Core/Src/stm32f7xx_it.c \
 Core/Src/usart.c \
 Core/Src/tim.c \
 Core/Src/led.c \
-Core/Src/d_tim.c \
-Core/Src/d_usart.c \
-Core/Src/d_led.c \
-FreeRTOS/list.c \
-FreeRTOS/queue.c \
+Core/Src/freertos_srv.c \
+Core/Src/srv_watchdog.c \
+Core/Src/srv_logger.c \
 FreeRTOS/tasks.c \
-FreeRTOS/portable/MemMang/heap_4.c \
+FreeRTOS/queue.c \
+FreeRTOS/list.c \
+FreeRTOS/timers.c \
 FreeRTOS/portable/GCC/ARM_CM7/r0p1/port.c \
+FreeRTOS/portable/MemMang/heap_4.c \
 
+# Core/Src/d_tim.c \
+# Core/Src/d_usart.c \
+# Core/Src/d_led.c \
+# Core/Src/srv_led.c \
 
 
 # ASM sources

@@ -15,8 +15,8 @@
 #define __MAIN_H
 
 /*** Define debug output to SWO ***/
-// #define SWO_ITM
-#define SWO_USART
+#define SWO_ITM
+// #define SWO_USART
 
 /*** Full assert ***/
 #define USE_FULL_ASSERT
@@ -41,13 +41,11 @@ extern "C" {
 #include "tim.h"
 #include "led.h"
 /*** Developer's headers ***/
-#include "d_tim.h"
-#include "d_usart.h"
-#include "d_led.h"
-#include "FreeRTOSConfig.h"
-/*** FtrrRTOS ***/
-#include "FreeRTOS.h"
-
+// #include "d_tim.h"
+// #include "d_usart.h"
+// #include "d_led.h"
+/*** FreeRTOS Services ***/
+#include "freertos_srv.h"
 
 
 /* Exported types ------------------------------------------------------------*/
