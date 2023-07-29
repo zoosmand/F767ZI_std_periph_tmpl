@@ -16,7 +16,7 @@
 
 /*** Define debug output to SWO ***/
 #define SWO_ITM
-// #define SWO_USART
+#define SWO_USART
 
 /*** Full assert ***/
 #define USE_FULL_ASSERT

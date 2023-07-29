@@ -31,8 +31,8 @@ void BasicTimer_Init(TIM_TypeDef *tim) {
 
   if (tim == TIM6) {
     /* TIM6 interrupt Init */
-    NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
-    NVIC_EnableIRQ(TIM6_DAC_IRQn);
+    // NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
+    // NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
     TIM6->PSC = 54000U - 1U; // APB1 runs on max freq of SystemCoreClock/2
     TIM6->ARR = 2000U - 1U;

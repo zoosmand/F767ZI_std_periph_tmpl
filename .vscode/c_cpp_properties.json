@@ -34,7 +34,7 @@
                 "DATA_CACHE_ENABLE=1",
                 "STM32F767xx"
             ],
-            "intelliSenseMode": "macos-gcc-arm",
+            "intelliSenseMode": "macos-clang-arm64",
             "cStandard": "c17",
             "cppStandard": "c++17",
             "browse": {

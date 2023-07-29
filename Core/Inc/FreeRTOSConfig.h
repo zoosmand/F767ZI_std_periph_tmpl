@@ -84,7 +84,7 @@
 //  <o>Timer task priority <0-56>
 //  <i> Timer task priority.
 //  <i> Default: 40 (High)
-#define configTIMER_TASK_PRIORITY               40
+#define configTIMER_TASK_PRIORITY               (configMAX_PRIORITIES - 1)
 
 //  <o>Timer queue length <0-1024>
 //  <i> Timer command queue length.
@@ -144,7 +144,7 @@ to exclude the API function. */
 
 /* The lowest interrupt priority that can be used in a call to a "set priority"
 function. */
-#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   15
+#define configLIBRARY_LOWEST_INTERRUPT_PRIORITY   3
 
 /* The highest interrupt priority that can be used by any interrupt service
 routine that makes calls to interrupt safe FreeRTOS API functions.  DO NOT CALL
@@ -165,7 +165,7 @@ header file. */
 
 /* Definitions that map the FreeRTOS port interrupt handlers to their CMSIS
 standard names. */
-#define vPortSVCHandler    SVC_Handler
+// #define vPortSVCHandler    SVC_Handler
 #define xPortPendSVHandler PendSV_Handler
 
 /* IMPORTANT: This define is commented when used with STM32Cube firmware, when the timebase source is SysTick,

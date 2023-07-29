@@ -70,7 +70,7 @@ void SystemInit(void) {
   /* Set Interrupt Group Priority */
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
   // NVIC_SetPriority(PendSV_IRQn, 15);
-  NVIC_SetPriority(PendSV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
+  // NVIC_SetPriority(PendSV_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
 
 
   // /* Conficure SysTick */
@@ -94,12 +94,12 @@ void SystemInit(void) {
   while (!(PREG_CHECK(RCC->APB1ENR, RCC_APB2ENR_SYSCFGEN_Pos)));
 
   /* FLASH_IRQn interrupt configuration */
-  NVIC_SetPriority(FLASH_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
-  NVIC_EnableIRQ(FLASH_IRQn);
+  // NVIC_SetPriority(FLASH_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
+  // NVIC_EnableIRQ(FLASH_IRQn);
 
   /* RCC_IRQn interrupt configuration */
-  NVIC_SetPriority(RCC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
-  NVIC_EnableIRQ(RCC_IRQn);
+  // NVIC_SetPriority(RCC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
+  // NVIC_EnableIRQ(RCC_IRQn);
 
   /* Set the FLASH Latency */
   MODIFY_REG(FLASH->ACR, FLASH_ACR_LATENCY, FLASH_ACR_LATENCY_7WS);
@@ -218,12 +218,12 @@ void SystemInit(void) {
 
   /*****************************************************************************************/
   /* IWDG */
-  IWDG->KR = IWDG_KEY_ENABLE;
-  IWDG->KR = IWDG_KEY_WR_ACCESS_ENABLE;
-  IWDG->PR =  IWDG_PR_PR & (IWDG_PR_PR_2 | IWDG_PR_PR_0); /*!< Divided by 128 */
-  IWDG->RLR = IWDG_RLR_RL & 624;                          /*<! ~2.5sec.  */
-  while (!(PREG_CHECK(IWDG->SR, IWDG_SR_PVU_Pos)));
-  IWDG->KR = IWDG_KEY_RELOAD;
+  // IWDG->KR = IWDG_KEY_ENABLE;
+  // IWDG->KR = IWDG_KEY_WR_ACCESS_ENABLE;
+  // IWDG->PR =  IWDG_PR_PR & (IWDG_PR_PR_2 | IWDG_PR_PR_0); /*!< Divided by 128 */
+  // IWDG->RLR = IWDG_RLR_RL & 624;                          /*<! ~2.5sec.  */
+  // while (!(PREG_CHECK(IWDG->SR, IWDG_SR_PVU_Pos)));
+  // IWDG->KR = IWDG_KEY_RELOAD;
 
   /*****************************************************************************************/
   /* Peripheral clock */

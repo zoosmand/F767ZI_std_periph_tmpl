@@ -25,14 +25,14 @@ void FreeRTOS_Run(void) {
   /* services */  
   srvWatchdog();
   // srvLed();
-  // srvLogger();
+  srvLogger();
 
   /* core clock */
   SysTick_Run();
   
   /* run the scheduler */
-  // vTaskStartScheduler();
-  xPortStartScheduler();
+  vTaskStartScheduler();
+  // xPortStartScheduler();
 }
 
 
@@ -48,8 +48,13 @@ static void SysTick_Run(void) {
   SET_BIT(SysTick->CTRL, SysTick_CTRL_ENABLE_Msk);
 
   /* define highest priority for SysTick interrupt configuration */
-  NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
-  NVIC_EnableIRQ(SysTick_IRQn);
+  // NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
+
+  // NVIC_SetPriority(PendSV_IRQn, 15);
+  // NVIC_EnableIRQ(SysTick_IRQn);
+
+  // __disable_irq();
+  // _Delay(5);
 }
 
 

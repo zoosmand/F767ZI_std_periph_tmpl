@@ -33,7 +33,7 @@ static void prvPeriodicLogMessage(void *pvParameters);
   */
 void srvLogger(void) {
 
-  xTaskCreate(prvPeriodicLogMessage, "PeriodicLogMessage", configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 1), &xPeriodicLogMessage);
+  xTaskCreate(prvPeriodicLogMessage, "PeriodicLogMessage", configMINIMAL_STACK_SIZE, NULL, 1, &xPeriodicLogMessage);
 }
 
 
