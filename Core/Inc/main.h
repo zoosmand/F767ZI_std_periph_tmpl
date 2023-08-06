@@ -15,7 +15,7 @@
 #define __MAIN_H
 
 /*** Define debug output to SWO ***/
-#define SWO_ITM
+// #define SWO_ITM
 #define SWO_USART
 
 /*** Full assert ***/

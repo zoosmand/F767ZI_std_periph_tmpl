@@ -41,6 +41,6 @@ static void prvPeriodicLogMessage(void *pvParameters) {
   while(1) {
     vTaskDelay(1000);
   
-    printf("test\n");
+    // printf("test\n");
   }
 }

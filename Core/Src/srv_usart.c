@@ -56,7 +56,7 @@ static void prvUsartReveive(void *pvParameters) {
       usartBufPtrIn &= RXBUF_MASK;
 
       // if the buffer is almost full, suspend and let the buffer free by  "prvUsartSend"
-      if (usartBufPtrIn == ((usartBufPtrOut - 8) & RXBUF_MASK)) {
+      if (usartBufPtrIn == ((usartBufPtrOut - 1) & RXBUF_MASK)) {
         FLAG_SET(_USARTREG_, _USART_LBRRF_);
         vTaskSuspend(NULL);
       }
