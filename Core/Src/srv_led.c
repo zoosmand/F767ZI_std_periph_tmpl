@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * File Name          : srv_led.c
-  * Description        : This file provides code for FreeRTOS LED service
+  * @file          : srv_led.c
+  * @brief         : This file provides code for FreeRTOS LED service
   ******************************************************************************
   * @attention
   *
@@ -13,51 +13,85 @@
 #include "freertos_srv.h"
 
 /* Local variables -----------------------------------------------------------*/
-static xTimerHandle xBlinkRedTimer = NULL;
-static xTimerHandle xBlinkGreenTimer = NULL;
+static TaskHandle_t xLedIndication = NULL;
 
+static void prvLedOnTimerIndtcation(void *pvParameters);
+static void prvLedOnUsartIndtcation(void *pvParameters);
+
+/* Global variables ----------------------------------------------------------*/
 
 /* Function prototypes -------------------------------------------------------*/
-static void prvBlinkRed(xTimerHandle);
-static void prvBlinkGreen(xTimerHandle);
+static void LED_Blink(GPIO_TypeDef*, uint16_t);
+static void BlinkGreen(void);
+static void BlinkRed(void);
+static void BlinkBlue(void);
 
-
-
-
-
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-
+/* Private functions ---------------------------------------------------------*/
 /**
   * @brief  Provides FreeRTOS LED service.
   * @return None
   */
 void srvLed(void) {
-
-  xBlinkRedTimer = xTimerCreate("BlinkRedTimer", (79/portTICK_RATE_MS), pdTRUE, (void*)0, prvBlinkRed);
-  xBlinkGreenTimer = xTimerCreate("BlinkGreenTimer", (113/portTICK_RATE_MS), pdTRUE, (void*)0, prvBlinkGreen);
-
-  xTimerStart(xBlinkRedTimer, 0);
-  xTimerStart(xBlinkGreenTimer, 0);
+  xTaskCreate(prvLedOnTimerIndtcation, "LED Indicator", configMINIMAL_STACK_SIZE, NULL, 1, &xLedIndication);
+  xTaskCreate(prvLedOnUsartIndtcation, "LED Indicator", configMINIMAL_STACK_SIZE, NULL, 1, &xLedIndication);
 }
 
 
 /**
-  * @brief  Blink rhe Red LED.
+  * @brief  LED Indication
   * @return None
   */
-static void prvBlinkRed(xTimerHandle xTimer) {
-  LED_Blink(GPIOG, GPIO_BSRR_BS14_Pos);
+static void prvLedOnTimerIndtcation(void *pvParameters) {
+
+  while (1) {
+    if (FLAG_CHECK(_TIMREG_, _BT6IAF_)) {
+      FLAG_CLR(_TIMREG_, _BT6IAF_);
+      BlinkGreen();
+    }
+  }
 }
+
 
 
 /**
-  * @brief  Blink rhe Green LED.
+  * @brief  LED Indication
   * @return None
   */
-static void prvBlinkGreen(xTimerHandle xTimer) {
-  LED_Blink(GPIOG, GPIO_BSRR_BS13_Pos);
+static void prvLedOnUsartIndtcation(void *pvParameters) {
+
+  while (1) {
+    if (FLAG_CHECK(_USARTREG_, _USART_RXAF_)) {
+      BlinkBlue();
+      vTaskDelay(10);
+      BlinkBlue();
+    }
+  }
 }
 
-/*************************** © Zoo IPS, 2021 **********************************/
+
+
+/* Private functions ---------------------------------------------------------*/
+/**
+  * @brief  This function blink a LED.
+  * @param  port: a pointer to a GPIO port
+  * @param  pinSource: a number of pin in a port
+  * @retval None
+  */
+static void LED_Blink(GPIO_TypeDef* port, uint16_t pinSource) {
+  (PIN_LEVEL(port, pinSource)) ? PIN_L(port, pinSource) : PIN_H(port, pinSource);
+}
+
+
+static void BlinkGreen(void) {
+  LED_Blink(LED_Port, GREEN_LED);
+}
+
+
+static void BlinkRed(void) {
+  LED_Blink(LED_Port, RED_LED);
+}
+
+
+static void BlinkBlue(void) {
+  LED_Blink(LED_Port, BLUE_LED);
+}

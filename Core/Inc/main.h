@@ -25,6 +25,7 @@
 extern "C" {
 #endif
 
+#define DEBUG
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdio.h>

@@ -30,19 +30,24 @@ uint32_t _TIMREG_ = 0;
 void BasicTimer_Init(TIM_TypeDef *tim) {
 
   if (tim == TIM6) {
-    /* TIM6 interrupt Init */
-    // NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
-    // NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
-    TIM6->PSC = 54000U - 1U; // APB1 runs on max freq of SystemCoreClock/2
-    TIM6->ARR = 2000U - 1U;
+    TIM6->PSC = RccClocks.PCLK1_Freq_Tim/20000 - 1U;
+    TIM6->ARR = 1000U - 1U;
     /* Autoreload enable */ 
     PREG_SET(TIM6->CR1, TIM_CR1_ARPE_Pos);
+    PREG_SET(TIM6->CR1, TIM_CR1_UDIS_Pos);
 
     /* Interrupt enabling passes */
-    PREG_CLR(TIM6->SR, TIM_SR_UIF_Pos);
+    // PREG_CLR(TIM6->SR, TIM_SR_UIF_Pos);
     PREG_SET(TIM6->DIER, TIM_DIER_UIE_Pos);
     PREG_SET(TIM6->CR1, TIM_CR1_CEN_Pos);
+
+    /* TIM6 interrupt Init */
+    NVIC_SetPriority(TIM6_DAC_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
+    NVIC_EnableIRQ(TIM6_DAC_IRQn);
+    // /* Clear pernding bit */
+    PREG_CLR(TIM6->SR, TIM_SR_UIF_Pos);
+    PREG_CLR(TIM6->CR1, TIM_CR1_UDIS_Pos);
   } else {
     // None of timers initialization
     Error_Handler();

@@ -42,44 +42,29 @@ void NMI_Handler(void) {
   * @brief This function handles Hard fault interrupt.
   */
 void HardFault_Handler(void) {
-  while (1) {
-    //
-  }
+  Error_Handler();
 }
 
 /**
   * @brief This function handles Memory management fault.
   */
 void MemManage_Handler(void) {
-  while (1) {
-    //
-  }
+  Error_Handler();
 }
 
 /**
   * @brief This function handles Pre-fetch fault, memory access fault.
   */
 void BusFault_Handler(void) {
-  while (1) {
-    //
-  }
+  Error_Handler();
 }
 
 /**
   * @brief This function handles Undefined instruction or illegal state.
   */
 void UsageFault_Handler(void) {
-  while (1) {
-    //
-  }
+  Error_Handler();
 }
-
-// /**
-//   * @brief This function handles System service call via SWI instruction.
-//   */
-// void SVC_Handler(void) {
-//   //
-// }
 
 /**
   * @brief This function handles Debug monitor.
@@ -88,20 +73,6 @@ void DebugMon_Handler(void) {
   //
 }
 
-// /**
-//   * @brief This function handles Pendable request for system service.
-//   */
-// void PendSV_Handler(void) {
-//   //
-// }
-
-// /**
-//   * @brief This function handles System tick timer.
-//   */
-// void SysTick_Handler(void) {
-//   //
-// }
-
 /******************************************************************************/
 /* STM32F7xx Peripheral Interrupt Handlers                                    */
 /* Add here the Interrupt Handlers for the used peripherals.                  */
@@ -109,27 +80,35 @@ void DebugMon_Handler(void) {
 /* please refer to the startup file (startup_stm32f7xx.s).                    */
 /******************************************************************************/
 
-// /**
-//   * @brief This function handles RCC global interrupt.
-//   */
-// void RCC_IRQHandler(void) {
-//   //
-// }
+/**
+  * @brief This function handles FLASH global interrupt.
+  */
+void FLASH_IRQHandler(void) {
+  //
+}
 
-// /**
-//   * @brief This function handles USART3 global interrupt.
-//   */
-// void USART3_IRQHandler(void) {
-//   /* Clear RXNE bit */
-//   PREG_SET(USART3->RQR, USART_RQR_RXFRQ_Pos);
-//   __NOP();
-//   FLAG_SET(_USARTREG_, _USART_RXAF_);
-// }
+/**
+  * @brief This function handles RCC global interrupt.
+  */
+void RCC_IRQHandler(void) {
+  //
+}
 
-// /**
-//   * @brief This function handles TIM6 global interrupt.
-//   */
-// void TIM6_DAC_IRQHandler(void) {
-//   PREG_CLR(TIM6->SR, TIM_SR_UIF_Pos);
-//   FLAG_SET(_TIMREG_, _BT6IAF_);
-// }
+/**
+  * @brief This function handles USART3 global interrupt.
+  */
+void USART3_IRQHandler(void) {
+  /* Clear RXNE bit */
+  PREG_SET(USART3->RQR, USART_RQR_RXFRQ_Pos);
+  __NOP();
+  FLAG_SET(_USARTREG_, _USART_RXAF_);
+}
+
+/**
+  * @brief This function handles TIM6 global interrupt.
+  */
+void TIM6_DAC_IRQHandler(void) {
+  PREG_CLR(TIM6->SR, TIM_SR_UIF_Pos);
+  __NOP();
+  FLAG_SET(_TIMREG_, _BT6IAF_);
+}

@@ -70,9 +70,9 @@ void USART_Init(USART_TypeDef* usart) {
     PREG_SET(USART3->CR1, USART_CR1_UE_Pos);
 
     /* USART3 interrupt Init */
-    // NVIC_SetPriority(USART3_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
-    // NVIC_EnableIRQ(USART3_IRQn);
-    /* Clear RXNE  pernding bit */
+    NVIC_SetPriority(USART3_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 15, 0));
+    NVIC_EnableIRQ(USART3_IRQn);
+    /* Clear pernding bit */
     PREG_SET(USART3->RQR, USART_RQR_RXFRQ_Pos);
 
   }

@@ -1,7 +1,7 @@
 /**
   ******************************************************************************
-  * File Name          : srv_logger.c
-  * Description        : This file provides code for FreeRTOS Logger service
+  * @file          : srv_logger.c
+  * @brief         : This file provides code for FreeRTOS Logger service
   ******************************************************************************
   * @attention
   *
@@ -15,18 +15,13 @@
 /* Local variables -----------------------------------------------------------*/
 static TaskHandle_t xPeriodicLogMessage = NULL;
 
+/* Global variables ----------------------------------------------------------*/
 
 /* Function prototypes */
 static void prvPeriodicLogMessage(void *pvParameters);
 
 
-
-
-
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-
+/* Private functions ---------------------------------------------------------*/
 /**
   * @brief  Provides FreeRTOS Logger service.
   * @return None
@@ -49,5 +44,3 @@ static void prvPeriodicLogMessage(void *pvParameters) {
     printf("test\n");
   }
 }
-
-/*************************** © Zoo IPS, 2021 **********************************/

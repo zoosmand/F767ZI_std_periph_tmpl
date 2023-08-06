@@ -25,14 +25,17 @@
 #include "queue.h"
 #include "list.h"
 #include "timers.h"
+#include "semphr.h"
+
 
 /* Exported functions prototypes ---------------------------------------------*/
 void FreeRTOS_Run(void);
 
 /* Services */
 void srvWatchdog(void);
-// void srvLed(void);
+void srvLed(void);
 void srvLogger(void);
+void srvUsart(void);
 
 
 #ifdef __cplusplus

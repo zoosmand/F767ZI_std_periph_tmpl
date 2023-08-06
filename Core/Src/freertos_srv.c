@@ -24,8 +24,9 @@ void FreeRTOS_Run(void) {
   
   /* services */  
   srvWatchdog();
-  // srvLed();
+  srvLed();
   srvLogger();
+  srvUsart();
 
   /* core clock */
   SysTick_Run();
@@ -46,15 +47,6 @@ static void SysTick_Run(void) {
   SysTick->LOAD = RccClocks.HCLK_Freq / 1000U - 1U;
   SysTick->VAL = 0;
   SET_BIT(SysTick->CTRL, SysTick_CTRL_ENABLE_Msk);
-
-  /* define highest priority for SysTick interrupt configuration */
-  // NVIC_SetPriority(SysTick_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
-
-  // NVIC_SetPriority(PendSV_IRQn, 15);
-  // NVIC_EnableIRQ(SysTick_IRQn);
-
-  // __disable_irq();
-  // _Delay(5);
 }
 
 
