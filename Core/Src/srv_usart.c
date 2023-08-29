@@ -12,18 +12,24 @@
 /* Includes ------------------------------------------------------------------*/
 #include "freertos_srv.h"
 
+/* Local definitions ---------------------------------------------------------*/
+#define RECEIVE_BUFFER_SIZE USART_BUFFER_LEN
+#define QTX_TIMEOUT (TickType_t)0
+#define QRX_TIMEOUT (TickType_t)0
+
 /* Local variables -----------------------------------------------------------*/
 static TaskHandle_t xUsartReceive = NULL;
 static TaskHandle_t xUsartSend = NULL;
+static QueueHandle_t xUsartBuffer = NULL;
 
-static uint16_t usartBuf[RXBUF_LEN];
-static uint16_t usartBufPtrIn = 0;
-static uint16_t usartBufPtrOut = 0;
+// static uint16_t usartBuf[RXBUF_LEN];
+// static uint16_t usartBufPtrIn = 0;
+// static uint16_t usartBufPtrOut = 0;
 
 /* Global variables ----------------------------------------------------------*/
 
 /* Function prototypes */
-static void prvUsartReveive(void *pvParameters);
+static void prvUsartReceive(void *pvParameters);
 static void prvUsartSend(void *pvParameters);
 static uint16_t USART_RxBufferRead(volatile uint8_t*, uint16_t);
 
@@ -33,8 +39,11 @@ static uint16_t USART_RxBufferRead(volatile uint8_t*, uint16_t);
   * @return None
   */
 void srvUsart(void) {
-  xTaskCreate(prvUsartReveive, "USART Recieve", configMINIMAL_STACK_SIZE, NULL, 1, &xUsartReceive);
-  xTaskCreate(prvUsartSend, "USART Send", 256, NULL, 1, &xUsartSend);
+  xTaskCreate(prvUsartReceive, "USART Recieve", configMINIMAL_STACK_SIZE, NULL, 1, &xUsartReceive);
+  xTaskCreate(prvUsartSend, "USART Send", configMINIMAL_STACK_SIZE, NULL, 1, &xUsartSend);
+
+  xUsartBuffer = xQueueCreate(USART_BUFFER_LEN, USART_BUFFER_ITEM_SIZE); 
+  configASSERT(xUsartBuffer);
 }
 
 
@@ -43,28 +52,32 @@ void srvUsart(void) {
   * @param pvParameters a prointer to the task parameters 
   * @return None
   */
-static void prvUsartReveive(void *pvParameters) {
+static void prvUsartReceive(void *pvParameters) {
+
+  static uint8_t tmp = 0;
+  const static uint8_t tmp_n = '\n';
 
   while(1) {
     if (FLAG_CHECK(_USARTREG_, _USART_RXAF_)) {
 
-      uint8_t tmp = USART3->RDR;
-      uint8_t preRxPtr = usartBufPtrIn - 1;
-      preRxPtr &= RXBUF_MASK;
-
-      usartBuf[(usartBufPtrIn++)] = tmp;
-      usartBufPtrIn &= RXBUF_MASK;
-
       // if the buffer is almost full, suspend and let the buffer free by  "prvUsartSend"
-      if (usartBufPtrIn == ((usartBufPtrOut - 1) & RXBUF_MASK)) {
+      if ((USART_BUFFER_LEN - uxQueueSpacesAvailable(xUsartBuffer)) <= 1) {
         FLAG_SET(_USARTREG_, _USART_LBRRF_);
         vTaskSuspend(NULL);
       }
 
-      // the end of message
+      tmp = USART3->RDR;
+      if (xQueueSend(xUsartBuffer, &tmp, QTX_TIMEOUT) != pdPASS) {
+        Error_Handler();
+      }
+
+      // at the end of message add '\n'
       if (tmp == '\r') { // 0x0d
-        usartBuf[(usartBufPtrIn++)] = '\n'; // 0x0a
-        FLAG_SET(_USARTREG_, _USART_LBRRF_);
+        if (xQueueSend(xUsartBuffer, &tmp_n, QTX_TIMEOUT) == pdPASS) {
+          FLAG_SET(_USARTREG_, _USART_LBRRF_);
+        } else {
+          Error_Handler();
+        }
       }
 
       FLAG_CLR(_USARTREG_, _USART_RXAF_);
@@ -79,10 +92,13 @@ static void prvUsartReveive(void *pvParameters) {
   * @return None
   */
 static void prvUsartSend(void *pvParameters) {
-  __IO uint8_t msg[RXBUF_LEN];
+
+  __IO uint8_t msg[RECEIVE_BUFFER_SIZE];
   while (1){
     if (FLAG_CHECK(_USARTREG_, _USART_LBRRF_)) {
-      uint16_t len = USART_RxBufferRead(msg, RXBUF_LEN);
+      uint16_t len = USART_RxBufferRead(msg, USART_BUFFER_LEN);
+
+      // printf will not display any symbol until the "\n" comes
       printf("%.*s", len, msg);
 
       FLAG_CLR(_USARTREG_, _USART_LBRRF_);
@@ -100,9 +116,13 @@ static void prvUsartSend(void *pvParameters) {
 */
 static uint16_t USART_RxBufferRead(volatile uint8_t* buf, uint16_t len) {
   uint16_t payloadLen = 0;
-  while (usartBufPtrOut != usartBufPtrIn) {
-    buf[(payloadLen++)] = usartBuf[(usartBufPtrOut++)];
-    usartBufPtrOut &= RXBUF_MASK;
+  uint8_t tmp = 0;
+  while ((USART_BUFFER_LEN - uxQueueSpacesAvailable(xUsartBuffer)) > 0) {
+    if (xQueueReceive(xUsartBuffer, &tmp, QRX_TIMEOUT) == pdPASS) {
+      buf[(payloadLen++)] = tmp; 
+    } else {
+      Error_Handler();
+    }
   }
   return payloadLen;
 }

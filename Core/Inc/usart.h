@@ -51,8 +51,8 @@ void USART_Init(USART_TypeDef *usart);
 #define USART_3_RX_Pin_Mask         GPIO_PIN_9_Mask
 #define USART_3_Port                GPIOD
 /*** RX Buffer definition ***/
-#define RXBUF_LEN                   256
-#define RXBUF_MASK                  (RXBUF_LEN - 1)
+#define USART_BUFFER_LEN            16
+#define USART_BUFFER_ITEM_SIZE      sizeof(uint8_t)
 /*** USART Registry Flags ***/
 #define _USART_LBRRF_               0 /*!< USART Local Buffer Ready To Read Flag */
 #define _USART_RXAF_                1 /*!< RX Action Flag */
