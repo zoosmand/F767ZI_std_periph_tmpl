@@ -44,10 +44,10 @@ Core/Src/usart.c \
 Core/Src/tim.c \
 Core/Src/led.c \
 Core/Src/freertos_srv.c \
-Core/Src/srv_watchdog.c \
-Core/Src/srv_logger.c \
-Core/Src/srv_led.c \
-Core/Src/srv_usart.c \
+Srv/Src/srv_watchdog.c \
+Srv/Src/srv_logger.c \
+Srv/Src/srv_led.c \
+Srv/Src/srv_usart.c \
 FreeRTOS/tasks.c \
 FreeRTOS/queue.c \
 FreeRTOS/list.c \
@@ -124,6 +124,7 @@ AS_INCLUDES =
 # C includes
 C_INCLUDES =  \
 -ICore/Inc \
+-ISrv/Inc \
 -IDrivers/CMSIS/Device/ST/STM32F7xx/Include \
 -IDrivers/CMSIS/Include \
 -IFreeRTOS/include \

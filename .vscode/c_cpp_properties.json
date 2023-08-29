@@ -12,6 +12,7 @@
                 "${workspaceFolder}/Drivers/CMSIS/Include/",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F7xx/Include",
                 "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/Srv/Inc",
                 "${workspaceFolder}/FreeRTOS/include",
                 "${workspaceFolder}/FreeRTOS/portable/GCC/ARM_CM7/r0p1"
             ],
@@ -60,7 +61,7 @@
                 "${workspaceFolder}/Drivers/CMSIS/Include",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F7xx/Include",
                 "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/Core/Src"
+                "${workspaceFolder}/Srv/Inc"
             ],
             "defines": [
                 "DEBUG",
