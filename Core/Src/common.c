@@ -30,7 +30,7 @@ __STATIC_INLINE void _putc(uint8_t ch);
   */
 void Error_Handler(void) {
   while (1) {
-    //
+    // TODO Determine logic 
   }
 }
 

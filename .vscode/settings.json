@@ -4,6 +4,8 @@
         "stm32f7xx.h": "c",
         "stdlib.h": "c",
         "stdio.h": "c",
-        "led.h": "c"
+        "led.h": "c",
+        "main.h": "c",
+        "freertos.h": "c"
     }
 }

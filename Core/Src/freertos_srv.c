@@ -33,7 +33,6 @@ void FreeRTOS_Run(void) {
   
   /* run the scheduler */
   vTaskStartScheduler();
-  // xPortStartScheduler();
 }
 
 
@@ -124,5 +123,3 @@ void vApplicationGetTimerTaskMemory (StaticTask_t **ppxTimerTaskTCBBuffer, Stack
 }
 
 #endif
-
-/*************************** © Zoo IPS, 2021 **********************************/

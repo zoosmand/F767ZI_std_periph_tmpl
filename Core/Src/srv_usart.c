@@ -22,10 +22,6 @@ static TaskHandle_t xUsartReceive = NULL;
 static TaskHandle_t xUsartSend = NULL;
 static QueueHandle_t xUsartBuffer = NULL;
 
-// static uint16_t usartBuf[RXBUF_LEN];
-// static uint16_t usartBufPtrIn = 0;
-// static uint16_t usartBufPtrOut = 0;
-
 /* Global variables ----------------------------------------------------------*/
 
 /* Function prototypes */
