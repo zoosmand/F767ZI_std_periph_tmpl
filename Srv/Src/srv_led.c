@@ -48,6 +48,10 @@ static void prvLedOnTimerIndtcation(void *pvParameters) {
       FLAG_CLR(_TIMREG_, _BT6IAF_);
       BlinkGreen();
     }
+    if (FLAG_CHECK(_EXTIREG_, _BTN0DF_)) {
+      FLAG_CLR(_EXTIREG_, _BTN0DF_);
+      BlinkRed();
+    }
   }
 }
 

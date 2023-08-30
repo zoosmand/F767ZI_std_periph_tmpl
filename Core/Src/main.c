@@ -36,6 +36,8 @@ int main(void) {
   BasicTimer_Init(TIM6);
   /* LED */
   LED_Init();
+  /* EXTI */
+  EXTI_Init();
 
   FreeRTOS_Run();
 
@@ -221,6 +223,7 @@ void SystemInit(void) {
   /* AHB1 */
   SET_BIT(RCC->AHB1ENR, ( 
       RCC_AHB1ENR_GPIOBEN
+    | RCC_AHB1ENR_GPIOCEN
     | RCC_AHB1ENR_GPIODEN
   ));
 

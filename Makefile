@@ -43,6 +43,7 @@ Core/Src/stm32f7xx_it.c \
 Core/Src/usart.c \
 Core/Src/tim.c \
 Core/Src/led.c \
+Core/Src/exti.c \
 Core/Src/freertos_srv.c \
 Srv/Src/srv_watchdog.c \
 Srv/Src/srv_logger.c \

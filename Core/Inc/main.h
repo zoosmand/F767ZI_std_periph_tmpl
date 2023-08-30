@@ -41,6 +41,7 @@ extern "C" {
 #include "usart.h"
 #include "tim.h"
 #include "led.h"
+#include "exti.h"
 /*** FreeRTOS Services ***/
 #include "freertos_srv.h"
 

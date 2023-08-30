@@ -105,6 +105,18 @@ void USART3_IRQHandler(void) {
 }
 
 /**
+  * @brief This function handles EXTI lines from 10 to 15 global interrupt.
+  */
+void EXTI15_10_IRQHandler(void) {
+  /* Clear perding bit */
+  if (READ_BIT(EXTI->PR, EXTI_PR_PR13) == (EXTI_PR_PR13)) {
+    PREG_SET(EXTI->PR, EXTI_PR_PR13_Pos);
+    __NOP();
+    FLAG_SET(_EXTIREG_, _BTN0DF_);
+  }
+}
+
+/**
   * @brief This function handles TIM6 global interrupt.
   */
 void TIM6_DAC_IRQHandler(void) {
