@@ -19,7 +19,7 @@
 /* Global variables ----------------------------------------------------------*/
 
 /* Private variables ---------------------------------------------------------*/
-static uint32_t redCounterStart = 0;
+static uint32_t greenCounterStart = 0;
 static uint32_t blueCounterStart = 0;
 
 /* Private functions ---------------------------------------------------------*/
@@ -34,32 +34,34 @@ void LED_Blink(GPIO_TypeDef* port, uint16_t pinSource) {
 }
 
 
-void BlinkGreen(void) {
-  LED_Blink(LED_Port, GREEN_LED);
-}
-
-
-void BlinkRed(uint32_t *millis) {
+void BlinkGreen(uint32_t *millis) {
   uint32_t threshold = 100;
-  if (redCounterStart == 0) {
-    redCounterStart = *millis;
+  if (greenCounterStart == 0) {
+    greenCounterStart = *millis;
   } else {
-    if (*millis >= (redCounterStart + threshold)) {
-      redCounterStart = 0;
-      LED_Blink(LED_Port, RED_LED);
+    if (*millis >= (greenCounterStart + threshold)) {
+      greenCounterStart = 0;
+      LED_Blink(LED_Port, GREEN_LED);
     }
   }
 }
 
 
+void BlinkRed(void) {
+  LED_Blink(LED_Port, RED_LED);
+}
+
+
 void BlinkBlue(uint32_t *millis) {
-  uint32_t threshold = 500;
+  uint32_t threshold = 10;
   if (blueCounterStart == 0) {
     blueCounterStart = *millis;
+    LED_Blink(LED_Port, BLUE_LED);
   } else {
     if (*millis >= (blueCounterStart + threshold)) {
       blueCounterStart = 0;
       LED_Blink(LED_Port, BLUE_LED);
+      FLAG_CLR(_LEDREG_, _LEDBUF_);
     }
   }
 }

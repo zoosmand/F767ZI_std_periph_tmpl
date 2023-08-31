@@ -111,8 +111,7 @@ static void CronSysQuantum_Handler(void) {
 
 // ---- Milliseconds ---- //
 static void CronMillis_Handler(void) {
-  Callback_Handler((void*) BlinkBlue, &millis);
-  Callback_Handler((void*) BlinkRed, &millis);
+  Callback_Handler((void*) BlinkGreen, &millis);
 }
 
 // ---- Seconds ---- //
@@ -173,14 +172,21 @@ static void Flags_Handler(void){
 
 
   /* ******** LED *************************************************/
-  /* LED Green up Flag  */
-  if (FLAG_CHECK(_LEDREG_, _LEDGUF_)) {
+  /* LED Red up Flag  */
+  if (FLAG_CHECK(_LEDREG_, _LEDRUF_)) {
 
     // --------------------- Run callback --------------------------
-    Callback_Handler((void*) BlinkGreen, NULL);
+    Callback_Handler((void*) BlinkRed, NULL);
     // -------------------------------------------------------------
     
-    FLAG_CLR(_LEDREG_, _LEDGUF_);
+    FLAG_CLR(_LEDREG_, _LEDRUF_);
+  }
+  /* LED Blue up Flag  */
+  if (FLAG_CHECK(_LEDREG_, _LEDBUF_)) {
+
+    // --------------------- Run callback --------------------------
+    Callback_Handler((void*) BlinkBlue, &millis);
+    // -------------------------------------------------------------
   }
 
 
@@ -188,8 +194,8 @@ static void Flags_Handler(void){
   /* Button0 is down  */
   if (FLAG_CHECK(_EXTIREG_, _BTN0DF_)) {
 
-    // Set Flag to toggle the Green LED
-    FLAG_SET(_LEDREG_, _LEDGUF_);
+    // Set Flag to toggle the Red LED
+    FLAG_SET(_LEDREG_, _LEDRUF_);
 
     FLAG_CLR(_EXTIREG_, _BTN0DF_);
   }

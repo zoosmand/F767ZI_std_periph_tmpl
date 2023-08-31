@@ -57,6 +57,8 @@ void UsartToBuffer(UsartHandlerCallbackParams* p) {
     usartBuf[(usartBufPtrIn++)] = '\n'; // 0x0a
     FLAG_SET(_USARTREG_, _USART_LBRRF_);
   }
+  // Callback_Handler((void*) BlinkBlue, &millis);
+  FLAG_SET(_LEDREG_, _LEDBUF_);
 }
 
 

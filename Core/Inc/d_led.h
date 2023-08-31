@@ -39,8 +39,8 @@
 /* Exported functions prototypes ---------------------------------------------*/
 void LED_Blink(GPIO_TypeDef* port, uint16_t pinSource);
 //
-void BlinkGreen(void);
-void BlinkRed(uint32_t *millis);
+void BlinkGreen(uint32_t *millis);
+void BlinkRed(void);
 void BlinkBlue(uint32_t *millis);
 
 /* Private defines -----------------------------------------------------------*/
