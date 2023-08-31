@@ -31,6 +31,7 @@
 void PingTim6(BasicTimerHandlerCallbackParams *p) {
   if (p->tim == TIM6) {
     // blink with the green Led
-    FLAG_SET(_LEDREG_, _LEDGUF_);
+    // FLAG_SET(_LEDREG_, _LEDGUF_);
+    __NOP();
   }
 }

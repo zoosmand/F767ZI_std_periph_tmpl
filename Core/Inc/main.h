@@ -41,6 +41,7 @@ extern "C" {
 #include "usart.h"
 #include "tim.h"
 #include "led.h"
+#include "exti.h"
 /*** Developer's headers ***/
 #include "d_tim.h"
 #include "d_usart.h"

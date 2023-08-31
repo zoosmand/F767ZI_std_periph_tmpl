@@ -51,6 +51,8 @@ int main(void) {
   BasicTimer_Init(TIM6);
   /* LED */
   LED_Init();
+  /* EXTI */
+  EXTI_Init();
 
 
   while (1) {
@@ -179,6 +181,17 @@ static void Flags_Handler(void){
     // -------------------------------------------------------------
     
     FLAG_CLR(_LEDREG_, _LEDGUF_);
+  }
+
+
+  /* ******** EXTI ************************************************/
+  /* Button0 is down  */
+  if (FLAG_CHECK(_EXTIREG_, _BTN0DF_)) {
+
+    // Set Flag to toggle the Green LED
+    FLAG_SET(_LEDREG_, _LEDGUF_);
+
+    FLAG_CLR(_EXTIREG_, _BTN0DF_);
   }
 }
 

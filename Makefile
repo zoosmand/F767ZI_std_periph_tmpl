@@ -43,6 +43,7 @@ Core/Src/stm32f7xx_it.c \
 Core/Src/usart.c \
 Core/Src/tim.c \
 Core/Src/led.c \
+Core/Src/exti.c \
 Core/Src/d_tim.c \
 Core/Src/d_usart.c \
 Core/Src/d_led.c \

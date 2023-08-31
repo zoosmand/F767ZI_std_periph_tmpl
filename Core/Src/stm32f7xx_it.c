@@ -127,6 +127,16 @@ void USART3_IRQHandler(void) {
 }
 
 /**
+  * @brief This function handles USART3 global interrupt.
+  */
+void EXTI15_10_IRQHandler(void) {
+  /* Clear pending bit */
+  PREG_SET(EXTI->PR, EXTI_PR_PR13_Pos);
+  __NOP();
+  FLAG_SET(_EXTIREG_, _BTN0DF_);
+}
+
+/**
   * @brief This function handles TIM6 global interrupt.
   */
 void TIM6_DAC_IRQHandler(void) {
