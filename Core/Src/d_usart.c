@@ -52,6 +52,12 @@ void UsartToBuffer(UsartHandlerCallbackParams* p) {
   usartBuf[(usartBufPtrIn++)] = tmp;
   usartBufPtrIn &= RXBUF_MASK;
 
+  // if the buffer is almost full, stop handling and release the buffer
+  if (usartBufPtrIn == ((usartBufPtrOut - 1) & RXBUF_MASK)) {
+    FLAG_SET(_USARTREG_, _USART_LBRRF_);
+    return;
+  }
+
   // the end of message
   if (tmp == '\r') { // 0x0d
     usartBuf[(usartBufPtrIn++)] = '\n'; // 0x0a
