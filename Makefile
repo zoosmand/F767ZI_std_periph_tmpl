@@ -47,6 +47,7 @@ Core/Src/exti.c \
 Core/Src/d_tim.c \
 Core/Src/d_usart.c \
 Core/Src/d_led.c \
+Core/Src/d_button.c \
 
 
 # ASM sources

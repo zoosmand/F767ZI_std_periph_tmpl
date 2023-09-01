@@ -17,6 +17,8 @@ static uint32_t millis_tmp    = 100;
 static uint32_t seconds_tmp   = 1000;
 static uint32_t minutes_tmp   = 60;
 // static uint32_t delay_ts = 0;
+static __IO uint32_t btnRattlingStart = 0;
+
 
 /* Global variables ----------------------------------------------------------*/
 uint32_t sysQuantum           = 0;
@@ -134,24 +136,16 @@ static void Flags_Handler(void){
   /* ******** USART/UART *******************************************/
   /* USART3 IT event  */
   if (FLAG_CHECK(_USARTREG_, _USART_RXAF_)) {
-
-    // --------------------- Run callback --------------------------
     UsartHandlerCallbackParams UsartToBufferParams = {
       .usart = USART3
     };
     Callback_Handler((void*) UsartToBuffer, (uint32_t*) &UsartToBufferParams);
-    // -------------------------------------------------------------
-    
     FLAG_CLR(_USARTREG_, _USART_RXAF_);
   }
 
   /* USART3 Buffer ready to read */
   if (FLAG_CHECK(_USARTREG_, _USART_LBRRF_)) {
-    
-    // --------------------- Run callback --------------------------
     Callback_Handler((void*) EchoToUSART, NULL);
-    // -------------------------------------------------------------
-    
     FLAG_CLR(_USARTREG_, _USART_LBRRF_);
   }
 
@@ -160,13 +154,10 @@ static void Flags_Handler(void){
   /* TIM6 IT event */
   if (FLAG_CHECK(_TIMREG_, _BT6IAF_)) {
 
-    // --------------------- Run callback --------------------------
     BasicTimerHandlerCallbackParams PingTim6Params = {
       .tim = TIM6
     };
     Callback_Handler((void*) PingTim6, (uint32_t*) &PingTim6Params);
-    // -------------------------------------------------------------
-    
     FLAG_CLR(_TIMREG_, _BT6IAF_);
   }
 
@@ -174,31 +165,84 @@ static void Flags_Handler(void){
   /* ******** LED *************************************************/
   /* LED Red up Flag  */
   if (FLAG_CHECK(_LEDREG_, _LEDRUF_)) {
-
-    // --------------------- Run callback --------------------------
     Callback_Handler((void*) BlinkRed, NULL);
-    // -------------------------------------------------------------
-    
     FLAG_CLR(_LEDREG_, _LEDRUF_);
   }
   /* LED Blue up Flag  */
   if (FLAG_CHECK(_LEDREG_, _LEDBUF_)) {
-
-    // --------------------- Run callback --------------------------
     Callback_Handler((void*) BlinkBlue, &millis);
-    // -------------------------------------------------------------
   }
 
 
   /* ******** EXTI ************************************************/
+
   /* Button0 is down  */
   if (FLAG_CHECK(_EXTIREG_, _BTN0DF_)) {
-
-    // Set Flag to toggle the Red LED
-    FLAG_SET(_LEDREG_, _LEDRUF_);
-
+    if (!FLAG_CHECK(_EXTIREG_, _BTN0PDF_)) {
+      btnRattlingStart = millis;
+      FLAG_SET(_EXTIREG_, _BTN0PDF_);
+    }
     FLAG_CLR(_EXTIREG_, _BTN0DF_);
   }
+
+  if (FLAG_CHECK(_EXTIREG_, _BTN0PDF_)) {
+    if (PIN_LEVEL(BTN0_Port, BTN0_Pin)) {
+      if (millis >= (btnRattlingStart + 100)) {
+        btnRattlingStart = millis;
+        FLAG_CLR(_EXTIREG_, _BTN0PDF_);
+        FLAG_SET(_EXTIREG_, _BTN0CLF_);
+      }
+    } else {
+      btnRattlingStart = 0;
+      FLAG_CLR(_EXTIREG_, _BTN0PDF_);
+    }
+  }
+
+  if (FLAG_CHECK(_EXTIREG_, _BTN0CLF_)) {
+    if (!PIN_LEVEL(BTN0_Port, BTN0_Pin)) {
+      if (millis < (btnRattlingStart + 500)) {
+        FLAG_SET(_EXTIREG_, _BTN0ONCLF_);
+      } else if ((millis >= (btnRattlingStart + 2000)) && (millis < (btnRattlingStart + 3000))) {
+        // 2 sec long click
+        FLAG_SET(_EXTIREG_, _BTN0ONLCL2SF_);
+      } else if ((millis >= (btnRattlingStart + 4000)) && (millis < (btnRattlingStart + 6000))) {
+        // 4 sec long click
+        FLAG_SET(_EXTIREG_, _BTN0ONLCL4SF_);
+      } else if ((millis >= (btnRattlingStart + 8000)) && (millis < (btnRattlingStart + 12000))) {
+        // 8 sec long click
+        FLAG_SET(_EXTIREG_, _BTN0ONLCL8SF_);
+      }
+      btnRattlingStart = 0;
+      FLAG_CLR(_EXTIREG_, _BTN0CLF_);
+    }
+  }
+
+
+  /* ******** EXTI (Buttin clik) **********************************/
+  /* Button0 OnClick */
+  if (FLAG_CHECK(_EXTIREG_, _BTN0ONCLF_)) {
+    FLAG_SET(_LEDREG_, _LEDRUF_);
+    FLAG_CLR(_EXTIREG_, _BTN0ONCLF_);
+  }
+
+  /* Button0 OnLongClick 2sec */
+  if (FLAG_CHECK(_EXTIREG_, _BTN0ONLCL2SF_)) {
+    printf("2s long click\n");
+    FLAG_CLR(_EXTIREG_, _BTN0ONLCL2SF_);
+  }
+
+  /* Button0 OnLongClick 4sec */
+  if (FLAG_CHECK(_EXTIREG_, _BTN0ONLCL4SF_)) {
+    printf("4s long click\n");
+    FLAG_CLR(_EXTIREG_, _BTN0ONLCL4SF_);
+  }
+
+  /* Button0 OnLongClick 8sec */
+  if (FLAG_CHECK(_EXTIREG_, _BTN0ONLCL8SF_)) {
+    printf("8s long click\n");
+    FLAG_CLR(_EXTIREG_, _BTN0ONLCL8SF_);
+  }
+
 }
 
 
@@ -401,6 +445,7 @@ void SystemInit(void) {
   /* AHB1 */
   SET_BIT(RCC->AHB1ENR, ( 
       RCC_AHB1ENR_GPIOBEN
+    | RCC_AHB1ENR_GPIOCEN
     | RCC_AHB1ENR_GPIODEN
   ));
 

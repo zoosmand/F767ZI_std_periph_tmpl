@@ -46,6 +46,7 @@ extern "C" {
 #include "d_tim.h"
 #include "d_usart.h"
 #include "d_led.h"
+#include "d_button.h"
 
 /* Exported types ------------------------------------------------------------*/
 struct __FILE {
