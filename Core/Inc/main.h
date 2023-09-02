@@ -15,11 +15,13 @@
 #define __MAIN_H
 
 /*** Define debug output to SWO ***/
-// #define SWO_ITM
-#define SWO_USART
+#define SWO_ITM
+// #define SWO_USART
+
 
 /*** Full assert ***/
 #define USE_FULL_ASSERT
+#define DEBUG
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,13 +40,7 @@ extern "C" {
 #include "common.h"
 #include "stm32f7xx_it.h"
 #include "callback.h"
-#include "usart.h"
-#include "tim.h"
-#include "led.h"
 /*** Developer's headers ***/
-#include "d_tim.h"
-#include "d_usart.h"
-#include "d_led.h"
 
 /* Exported types ------------------------------------------------------------*/
 struct __FILE {
@@ -80,9 +76,8 @@ extern uint32_t SystemCoreClock;
 extern RCC_ClocksTypeDef RccClocks;
 
 /* Exported functions prototypes ---------------------------------------------*/
-extern void Delay_Handler(uint32_t delay);
 extern void Delay(uint32_t delay);
-extern void Cron_Handler(void);
+
 
 /* Private defines -----------------------------------------------------------*/
 /*** _GLOBALREG_ Flags ***/    

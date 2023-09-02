@@ -29,6 +29,7 @@ uint32_t SystemCoreClock      = 16000000;
 RCC_ClocksTypeDef RccClocks;
 
 /* Private function prototypes -----------------------------------------------*/
+static void Cron_Handler(void);
 static void CronSysQuantum_Handler(void);
 static void CronMillis_Handler(void);
 static void CronSeconds_Handler(void);
@@ -45,16 +46,9 @@ int main(void) {
   Delay(500);
 
   /****** peripheral initialization *******************/
-  /* USART */ 
-  USART_Init(USART3);
-  /* Basic Timer */
-  BasicTimer_Init(TIM6);
-  /* LED */
-  LED_Init();
 
 
   while (1) {
-    Delay_Handler(0);
     Cron_Handler();
     Flags_Handler();
   }
@@ -65,8 +59,8 @@ int main(void) {
 /********************************************************************************/
 /*                                     CRON                                     */
 /********************************************************************************/
-void Cron_Handler(void) {
-  $CronStart:
+static void Cron_Handler(void) {
+  // $CronStart:
   if (SysTick->CTRL & (1 << SysTick_CTRL_COUNTFLAG_Pos)) { 
     sysQuantum++;
     CronSysQuantum_Handler();
@@ -89,13 +83,6 @@ void Cron_Handler(void) {
     minutes_tmp += 60;
     CronMinutes_Handler();
   }
-
-  while (sysQuantum < delay_tmp) {
-    goto $CronStart;
-  }
-  // TODO Overload counter during a delay, a serious bug is here
-  delay_tmp = 0;
-  FLAG_CLR(_GLOBALREG_, _DELAYF_);
 }
 
 
@@ -109,14 +96,14 @@ static void CronSysQuantum_Handler(void) {
 
 // ---- Milliseconds ---- //
 static void CronMillis_Handler(void) {
-  Callback_Handler((void*) BlinkBlue, &millis);
-  Callback_Handler((void*) BlinkRed, &millis);
+  //
 }
 
 // ---- Seconds ---- //
 static void CronSeconds_Handler(void) {
   /* Refresh independent watchdog */
   IWDG->KR = IWDG_KEY_RELOAD;
+  printf("rtest\n");
 }
 
 // ---- Minutes ---- //
@@ -128,58 +115,12 @@ static void CronMinutes_Handler(void) {
 /********************************************************************************/
 /*                                     FLAGS                                    */
 /********************************************************************************/
-static void Flags_Handler(void){
-
-  /* ******** USART/UART *******************************************/
-  /* USART3 IT event  */
-  if (FLAG_CHECK(_USARTREG_, _USART_RXAF_)) {
-
-    // --------------------- Run callback --------------------------
-    UsartHandlerCallbackParams UsartToBufferParams = {
-      .usart = USART3
-    };
-    Callback_Handler((void*) UsartToBuffer, (uint32_t*) &UsartToBufferParams);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_USARTREG_, _USART_RXAF_);
+static void Flags_Handler(void) {
+  if (FLAG_CHECK(_GLOBALREG_, _DELAYF_)) {
+    // do something
+    FLAG_CLR(_GLOBALREG_, _DELAYF_);
   }
 
-  /* USART3 Buffer ready to read */
-  if (FLAG_CHECK(_USARTREG_, _USART_LBRRF_)) {
-    
-    // --------------------- Run callback --------------------------
-    Callback_Handler((void*) EchoToUSART, NULL);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_USARTREG_, _USART_LBRRF_);
-  }
-
-
-  /* ******** Timers ***********************************************/
-  /* TIM6 IT event */
-  if (FLAG_CHECK(_TIMREG_, _BT6IAF_)) {
-
-    // --------------------- Run callback --------------------------
-    BasicTimerHandlerCallbackParams PingTim6Params = {
-      .tim = TIM6
-    };
-    Callback_Handler((void*) PingTim6, (uint32_t*) &PingTim6Params);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_TIMREG_, _BT6IAF_);
-  }
-
-
-  /* ******** LED *************************************************/
-  /* LED Green up Flag  */
-  if (FLAG_CHECK(_LEDREG_, _LEDGUF_)) {
-
-    // --------------------- Run callback --------------------------
-    Callback_Handler((void*) BlinkGreen, NULL);
-    // -------------------------------------------------------------
-    
-    FLAG_CLR(_LEDREG_, _LEDGUF_);
-  }
 }
 
 
@@ -202,7 +143,7 @@ void Delay(uint32_t delay) {
   */
 void SystemInit(void) {
   /* Vector Table Relocation in Internal FLASH */
-  SCB->VTOR = FLASH_BASE | 0x00;
+  SCB->VTOR = FLASH_BASE;
 
  /* Enable I-Cache */
   SCB_EnableICache();
@@ -210,11 +151,8 @@ void SystemInit(void) {
   /* Enable D-Cache */
   SCB_EnableDCache();
 
-  /* Enable the FLASH Adaptive Real-Time memory accelerator */
-  SET_BIT(FLASH->ACR, FLASH_ACR_ARTEN);
-
-  /* Enable the FLASH prefetch buffer */
-  FLASH->ACR |= FLASH_ACR_PRFTEN;
+  /* Enable the FLASH Adaptive Real-Time memory accelerator andprefetch buffer */
+  PREG_SET(FLASH->ACR, (FLASH_ACR_ARTEN_Pos | FLASH_ACR_PRFTEN_Pos));
 
   /* Set Interrupt Group Priority */
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
@@ -343,14 +281,14 @@ void SystemInit(void) {
   /* Freeze some peripherals for debug purposes */
   #ifdef DEBUG
   SET_BIT(DBGMCU->APB1FZ, (
-      DBGMCU_APB1_FZ_DBG_TIM7_STOP
-    | DBGMCU_APB1_FZ_DBG_TIM6_STOP
-    | DBGMCU_APB1_FZ_DBG_IWDG_STOP
-    | DBGMCU_APB1_FZ_DBG_WWDG_STOP
+      DBGMCU_APB1_FZ_DBG_TIM7_STOP_Pos
+    | DBGMCU_APB1_FZ_DBG_TIM6_STOP_Pos
+    | DBGMCU_APB1_FZ_DBG_IWDG_STOP_Pos
+    | DBGMCU_APB1_FZ_DBG_WWDG_STOP_Pos
   ));
   #endif
 
-  /* Set TPUI output fto ITM */
+  /* Set TPUI output ITM */
   // PREG_SET(CoreDebug->DEMCR, CoreDebug_DEMCR_TRCENA_Pos);
   // TPI->CSPSR = 0x1;
   // TPI->FFCR = 0x102;
@@ -372,20 +310,16 @@ void SystemInit(void) {
   IWDG->KR = IWDG_KEY_RELOAD;
 
   /*****************************************************************************************/
-  /* Peripheral clock */
-  /* APB1 */
-  SET_BIT(RCC->APB1ENR, (
-      RCC_APB1ENR_TIM6EN
-    | RCC_APB1ENR_USART3EN
-  ));
+  /* Peripheral clock enabling */
+  // /* APB1 */
+  // SET_BIT(RCC->APB1ENR, (
+  // ));
 
-  /* AHB1 */
-  SET_BIT(RCC->AHB1ENR, ( 
-      RCC_AHB1ENR_GPIOBEN
-    | RCC_AHB1ENR_GPIODEN
-  ));
+  // /* AHB1 */
+  // SET_BIT(RCC->AHB1ENR, ( 
+  // ));
 
-  /* APB2 */
+  // /* APB2 */
   // SET_BIT(RCC->APB2ENR, (
   // ));
 

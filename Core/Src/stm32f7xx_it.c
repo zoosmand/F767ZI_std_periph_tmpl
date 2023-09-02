@@ -115,21 +115,3 @@ void SysTick_Handler(void) {
 void RCC_IRQHandler(void) {
   //
 }
-
-/**
-  * @brief This function handles USART3 global interrupt.
-  */
-void USART3_IRQHandler(void) {
-  /* Clear RXNE bit */
-  PREG_SET(USART3->RQR, USART_RQR_RXFRQ_Pos);
-  __NOP();
-  FLAG_SET(_USARTREG_, _USART_RXAF_);
-}
-
-/**
-  * @brief This function handles TIM6 global interrupt.
-  */
-void TIM6_DAC_IRQHandler(void) {
-  PREG_CLR(TIM6->SR, TIM_SR_UIF_Pos);
-  FLAG_SET(_TIMREG_, _BT6IAF_);
-}

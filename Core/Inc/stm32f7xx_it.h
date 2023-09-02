@@ -17,8 +17,6 @@
  extern "C" {
 #endif
 
-// #include "main.h"
-
 /* Private includes ----------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/
@@ -38,9 +36,6 @@ void DebugMon_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
 void RCC_IRQHandler(void);
-
-void USART3_IRQHandler(void);
-void TIM6_DAC_IRQHandler(void);
 
 
 #ifdef __cplusplus

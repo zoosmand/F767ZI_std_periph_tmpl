@@ -6,8 +6,8 @@
 # Generic Makefile (based on gcc)
 #
 # ChangeLog :
-#	2017-02-10 - Several enhancements + project update mode
-#   2015-07-22 - first version
+#	2023-09-02 - Several enhancements + project update mode
+#   2023-09-02 - first version
 # ------------------------------------------------
 
 ######################################
@@ -40,12 +40,6 @@ Core/Src/main.c \
 Core/Src/common.c \
 Core/Src/callback.c \
 Core/Src/stm32f7xx_it.c \
-Core/Src/usart.c \
-Core/Src/tim.c \
-Core/Src/led.c \
-Core/Src/d_tim.c \
-Core/Src/d_usart.c \
-Core/Src/d_led.c \
 
 
 # ASM sources
