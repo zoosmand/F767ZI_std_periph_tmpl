@@ -44,7 +44,7 @@ Core/Src/usart.c \
 Core/Src/tim.c \
 Core/Src/led.c \
 Core/Src/exti.c \
-Core/Src/freertos_srv.c \
+Srv/Src/freertos_srv.c \
 Srv/Src/srv_watchdog.c \
 Srv/Src/srv_logger.c \
 Srv/Src/srv_led.c \

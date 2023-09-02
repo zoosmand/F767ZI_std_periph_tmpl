@@ -31,7 +31,7 @@ void BasicTimer_Init(TIM_TypeDef *tim) {
 
   if (tim == TIM6) {
 
-    TIM6->PSC = RccClocks.PCLK1_Freq_Tim/20000 - 1U;
+    TIM6->PSC = RccClocks.PCLK1_Freq_Tim/10000 - 1U;
     TIM6->ARR = 1000U - 1U;
     /* Autoreload enable */ 
     PREG_SET(TIM6->CR1, TIM_CR1_ARPE_Pos);
