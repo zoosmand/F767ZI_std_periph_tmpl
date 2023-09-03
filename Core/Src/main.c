@@ -53,7 +53,6 @@ int main(void) {
   */
 void SystemInit(void) {
   /* Vector Table Relocation in Internal FLASH */
-  // SCB->VTOR = FLASH_BASE | 0x00;
   SCB->VTOR = FLASH_BASE;
 
  /* Enable I-Cache */
@@ -63,11 +62,7 @@ void SystemInit(void) {
   SCB_EnableDCache();
 
   /* Enable the FLASH Adaptive Real-Time memory accelerator and prefetch buffer */
-  // PREG_SET(FLASH->ACR, FLASH_ACR_ARTRST_Pos);
   PREG_SET(FLASH->ACR, (FLASH_ACR_ARTRST_Pos | FLASH_ACR_PRFTEN_Pos));
-
-  /* Enable the FLASH prefetch buffer */
-  // FLASH->ACR |= FLASH_ACR_PRFTEN;
 
   /* Set Interrupt Group Priority */
   NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);

@@ -48,8 +48,14 @@ void EXTI_Init(void);
 #define BTN0_Pin_Mask   GPIO_PIN_13_Mask
 #define BTN0_Port       GPIOC
 /*** EXTI Registry Flags ***/
-#define _BTN0DF_     0 /*!< Button0 is Down Flag */
-#define _BTN0UF_     1 /*!< Button0 is Up Flag */
+#define _BTN0DF_        0 /*!< Button0 is Down Flag */
+#define _BTN0UF_        1 /*!< Button0 is Up Flag */
+#define _BTN0PDF_       2 /*!< Button0 Press Down Flag */
+#define _BTN0CLF_       3 /*!< Button0 CLick Flag */
+#define _BTN0ONCLF_     4 /*!< Button0 OnCLick Flag */
+#define _BTN0ONLCL2SF_  5 /*!< Button0 OnLongCLick 2sec Flag */
+#define _BTN0ONLCL4SF_  6 /*!< Button0 OnLongCLick 4sec Flag */
+#define _BTN0ONLCL8SF_  7 /*!< Button0 OnLongCLick 8sec Flag */
 
 
 #ifdef __cplusplus

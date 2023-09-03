@@ -34,8 +34,10 @@ void FreeRTOS_Run(void);
 /* Services */
 void srvWatchdog(void);
 void srvLed(void);
+void BlinkRed(void);
 void srvLogger(void);
 void srvUsart(void);
+void srvButton(void);
 
 
 #ifdef __cplusplus

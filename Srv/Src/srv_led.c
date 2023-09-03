@@ -23,7 +23,7 @@ static void prvLedOnUsartIndtcation(void *pvParameters);
 /* Function prototypes -------------------------------------------------------*/
 static void LED_Blink(GPIO_TypeDef*, uint16_t);
 static void BlinkGreen(void);
-static void BlinkRed(void);
+// static void BlinkRed(void);
 static void BlinkBlue(void);
 
 /* Private functions ---------------------------------------------------------*/
@@ -47,10 +47,6 @@ static void prvLedOnTimerIndtcation(void *pvParameters) {
     if (FLAG_CHECK(_TIMREG_, _BT6IAF_)) {
       FLAG_CLR(_TIMREG_, _BT6IAF_);
       BlinkGreen();
-    }
-    if (FLAG_CHECK(_EXTIREG_, _BTN0DF_)) {
-      FLAG_CLR(_EXTIREG_, _BTN0DF_);
-      BlinkRed();
     }
   }
 }
@@ -91,7 +87,8 @@ static void BlinkGreen(void) {
 }
 
 
-static void BlinkRed(void) {
+// static void BlinkRed(void) {
+void BlinkRed(void) {
   LED_Blink(LED_Port, RED_LED);
 }
 

@@ -47,8 +47,9 @@ Core/Src/exti.c \
 Srv/Src/freertos_srv.c \
 Srv/Src/srv_watchdog.c \
 Srv/Src/srv_logger.c \
-Srv/Src/srv_led.c \
 Srv/Src/srv_usart.c \
+Srv/Src/srv_led.c \
+Srv/Src/srv_button.c \
 FreeRTOS/tasks.c \
 FreeRTOS/queue.c \
 FreeRTOS/list.c \

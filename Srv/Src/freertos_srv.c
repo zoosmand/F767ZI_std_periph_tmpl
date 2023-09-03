@@ -27,6 +27,7 @@ void FreeRTOS_Run(void) {
   srvLed();
   srvLogger();
   srvUsart();
+  srvButton();
 
   /* core clock */
   SysTick_Run();
