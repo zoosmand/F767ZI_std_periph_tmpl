@@ -30,7 +30,6 @@ RCC_ClocksTypeDef RccClocks;
 
 /* Private function prototypes -----------------------------------------------*/
 static void Cron_Handler(void);
-static void CronSysQuantum_Handler(void);
 static void CronMillis_Handler(void);
 static void CronSeconds_Handler(void);
 static void CronMinutes_Handler(void);
@@ -60,10 +59,8 @@ int main(void) {
 /*                                     CRON                                     */
 /********************************************************************************/
 static void Cron_Handler(void) {
-  // $CronStart:
   if (SysTick->CTRL & (1 << SysTick_CTRL_COUNTFLAG_Pos)) { 
     sysQuantum++;
-    CronSysQuantum_Handler();
   }
 
   if (sysQuantum >= millis_tmp) {
@@ -89,26 +86,19 @@ static void Cron_Handler(void) {
 /********************************************************************************/
 /*                             CRON EVENTS HANDLERS                             */
 /********************************************************************************/
-// ---- System Quantum ---- //
-static void CronSysQuantum_Handler(void) {
-  //
-}
-
 // ---- Milliseconds ---- //
 static void CronMillis_Handler(void) {
-  //
+  FLAG_SET(_GLOBALREG_, _MILHF_);
 }
 
 // ---- Seconds ---- //
 static void CronSeconds_Handler(void) {
-  /* Refresh independent watchdog */
-  IWDG->KR = IWDG_KEY_RELOAD;
-  printf("rtest\n");
+  FLAG_SET(_GLOBALREG_, _SECHF_);
 }
 
 // ---- Minutes ---- //
 static void CronMinutes_Handler(void) {
-  printf("%d seconds left since start\n", (int) seconds);
+  FLAG_SET(_GLOBALREG_, _MINHF_);
 }
 
 
@@ -118,9 +108,38 @@ static void CronMinutes_Handler(void) {
 static void Flags_Handler(void) {
   if (FLAG_CHECK(_GLOBALREG_, _DELAYF_)) {
     // do something
+
     FLAG_CLR(_GLOBALREG_, _DELAYF_);
   }
 
+  if (FLAG_CHECK(_GLOBALREG_, _WDTRF_)) {
+    // Reset watchdog
+    IWDG->KR = IWDG_KEY_RELOAD;
+
+    FLAG_CLR(_GLOBALREG_, _WDTRF_);
+  }
+
+  if (FLAG_CHECK(_GLOBALREG_, _MILHF_)) {
+    // do something
+
+    FLAG_CLR(_GLOBALREG_, _MILHF_);
+  }
+
+  if (FLAG_CHECK(_GLOBALREG_, _SECHF_)) {
+    // Activate Watchdog to reset
+    FLAG_SET(_GLOBALREG_, _WDTRF_);
+    // Output seconds reminder
+    printf("test\n");
+
+    FLAG_CLR(_GLOBALREG_, _SECHF_);
+  }
+
+  if (FLAG_CHECK(_GLOBALREG_, _MINHF_)) {
+    // Output minutes reminder
+    printf("%d seconds left since start\n", (int) seconds);
+    
+    FLAG_CLR(_GLOBALREG_, _MINHF_);
+  }
 }
 
 

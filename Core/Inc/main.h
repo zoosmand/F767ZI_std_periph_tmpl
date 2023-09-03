@@ -81,7 +81,11 @@ extern void Delay(uint32_t delay);
 
 /* Private defines -----------------------------------------------------------*/
 /*** _GLOBALREG_ Flags ***/    
-#define _DELAYF_  0 // Delay handler Flag
+#define _DELAYF_      0 // Delay handler Flag
+#define _WDTRF_       1 // Watchdog reset Flag
+#define _MILHF_       2 // Millieconds handler Flag
+#define _SECHF_       3 // Seconds handler Flag
+#define _MINHF_       4 // Minutes handler Flag
 
 #define CCMRAM  __attribute__((section(".ccmram")))
 
