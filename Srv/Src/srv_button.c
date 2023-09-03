@@ -62,14 +62,15 @@ static void prvButtonHandler(void *pvParameters) {
     }
 
     if (FLAG_CHECK(_EXTIREG_, _BTN0CLF_)) {
+      uint32_t tickNow = xTaskGetTickCount();
       if (!PIN_LEVEL(BTN0_Port, BTN0_Pin)) {
-        if (xTaskGetTickCount() <= tickStartBtn + 500) {
+        if (tickNow <= tickStartBtn + 500) {
           FLAG_SET(_EXTIREG_, _BTN0ONCLF_);
-        } else if ((xTaskGetTickCount() > tickStartBtn + 2000) && (xTaskGetTickCount() <= tickStartBtn + 3000)) {
+        } else if ((tickNow > tickStartBtn + 2000) && (tickNow <= tickStartBtn + 3000)) {
           FLAG_SET(_EXTIREG_, _BTN0ONLCL2SF_);
-        } else if ((xTaskGetTickCount() > tickStartBtn + 4000) && (xTaskGetTickCount() <= tickStartBtn + 6000)) {
+        } else if ((tickNow > tickStartBtn + 4000) && (tickNow <= tickStartBtn + 6000)) {
           FLAG_SET(_EXTIREG_, _BTN0ONLCL4SF_);
-        } else if ((xTaskGetTickCount() > tickStartBtn + 8000) && (xTaskGetTickCount() <= tickStartBtn + 12000)) {
+        } else if ((tickNow > tickStartBtn + 8000) && (tickNow <= tickStartBtn + 12000)) {
           FLAG_SET(_EXTIREG_, _BTN0ONLCL8SF_);
         }
 
