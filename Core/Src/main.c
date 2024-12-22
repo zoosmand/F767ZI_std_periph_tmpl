@@ -93,7 +93,6 @@ int main(void) {
 void Cron_Handler(void) {
   $CronStart:
   if (SysTick->CTRL & (1 << SysTick_CTRL_COUNTFLAG_Pos)) { 
-    sysQuantum++;
     CronSysQuantum_Handler();
   }
 
@@ -149,9 +148,9 @@ static void CronMinutes_Handler(void) {
   if (!bmx280Status) {
     static int32_t buf[3];
     if (!BMx280_Measurment(&sensor, buf)) {
-      printf("%ld.%ld C\n", buf[0]/100, buf[0]&100);
-      printf("%ld.%ld Pa\n", buf[1]/100, buf[1]&100);
-      printf("%ld.%ld%%\n", buf[2]/1000, buf[2]&1000/100);
+      printf("%ld.%ld C\n", buf[0]/100, buf[0]&100/10);
+      printf("%ld.%ld Pa\n", buf[1]/100, buf[1]&100/10);
+      printf("%ld.%ld%%\n\n", buf[2]/1000, buf[2]&1000/100);
     }
   }
 
