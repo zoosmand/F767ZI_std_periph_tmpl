@@ -13,7 +13,6 @@
 #include "bmx280.h"
 
 /* Locaal variables ---------------------------------------------------------*/
-static BMx280_ItemTypeDef bmxItem;
 static uint16_t dig_T1  = 0;
 static int16_t dig_T2   = 0;
 static int16_t dig_T3   = 0;
@@ -45,8 +44,8 @@ ErrorStatus bmx280Status = ERROR;
 
 
 /* Private function prototypes ----------------------------------------------*/
-static ErrorStatus BMx280_Read(BMx280_ItemTypeDef item, uint8_t cmd, uint8_t *buf, uint8_t len);
-static ErrorStatus BMx280_Write(BMx280_ItemTypeDef item, uint8_t *buf, uint8_t len);
+static ErrorStatus BMx280_Read(BMx280_ItemTypeDef *item, uint8_t cmd, uint8_t *buf, uint8_t len);
+static ErrorStatus BMx280_Write(BMx280_ItemTypeDef *item, uint8_t *buf, uint8_t len);
 static BMx280_S32_t bmx280_compensate_T_int32(BMx280_S32_t adc_T);
 static BMx280_U32_t bmx280_compensate_P_int32(BMx280_S32_t adc_P);
 static BMx280_U32_t bmx280_compensate_H_int32(BMx280_S32_t adc_H);
@@ -70,37 +69,21 @@ static BMx280_U32_t bmx280_compensate_H_int32(BMx280_S32_t adc_H);
   * @param  transportType: a data transport of a sensor
   * @return Error status
   */
-ErrorStatus BMx280_Init(BMx280_SensorTypeDef sensorType, BMx280_TransportTypeDef transportType) {
+ErrorStatus BMx280_Init(BMx280_ItemTypeDef *sensor) {
   uint8_t buf[32];
 
-  bmxItem.sensorType = sensorType;
-  bmxItem.transportType = transportType;
-
-  // ErrorStatus (*Callback_Read)();
-  // ErrorStatus (*Callback_Write)();
-
-  // if (transportType == BMx280_I2C) {
-  //   Callback_Read = &I2C_Read;
-  //   Callback_Write = &I2C_Write;
-  // } else {
-  //   // callback = &SPI_read;
-  // }
-
-  // if (Callback_Read(I2C1, BMX280_I2C_ADDR, BMX280_DEV_ID, buf, 1)) {
-  //   return (ERROR);
-  // }
 
   /* Read Device ID and if it isn't equal to the current, exit. */
   buf[0] = 0;
-  if (BMx280_Read(bmxItem, BMX280_DEV_ID, buf, 1)) {
+  if (BMx280_Read(sensor, BMX280_DEV_ID, buf, 1)) {
     return (ERROR);
   }
-  if (sensorType != buf[0]) {
+  if (sensor->sensorType != buf[0]) {
     return (ERROR);
   }
 
   /* Read calibration data. This is common for both sensor's types */
-  if (BMx280_Read(bmxItem, BMX280_CALIB1, buf, 26)) {
+  if (BMx280_Read(sensor, BMX280_CALIB1, buf, 26)) {
     return (ERROR);
   }
   dig_T1 = (uint16_t)((buf[1] << 8) | buf[0]);
@@ -117,10 +100,10 @@ ErrorStatus BMx280_Init(BMx280_SensorTypeDef sensorType, BMx280_TransportTypeDef
   dig_P9 = (int16_t)((buf[23] << 8) | buf[22]);
 
   /* If the sensor is BME280, read additianal block of calibration data */
-  if (sensorType == BME280) {
+  if (sensor->sensorType == BME280) {
     dig_H1 = (uint8_t)buf[25];
 
-    if (BMx280_Read(bmxItem, BMX280_CALIB2, buf, 16)) {
+    if (BMx280_Read(sensor, BMX280_CALIB2, buf, 16)) {
       return (ERROR);
     }
     dig_H2 = (int16_t)((buf[1] << 8) | buf[0]);
@@ -133,21 +116,21 @@ ErrorStatus BMx280_Init(BMx280_SensorTypeDef sensorType, BMx280_TransportTypeDef
   /* Set filter coefficient to 8 and 1s inactive duration in normal mode */
   buf[0] = BMX280_SETTINGS;
   buf[1] = 0xac;
-  if (BMx280_Write(bmxItem, buf, 2)) {
+  if (BMx280_Write(sensor, buf, 2)) {
     return (ERROR);
   }
 
   /* Set the humidity oversampling to 16 (highest precision) */
   buf[0] = BMX280_CTRL_HUM;
   buf[1] = 0x05;
-  if (BMx280_Write(bmxItem, buf, 2)) {
+  if (BMx280_Write(sensor, buf, 2)) {
     return (ERROR);
   }
 
   /* Set the temperature and pressure oversampling to 16 (highest precision) */
   buf[0] = BMX280_CTRL_MEAS;
   buf[1] = 0xb4;
-  if (BMx280_Write(bmxItem, buf, 2)) {
+  if (BMx280_Write(sensor, buf, 2)) {
     return (ERROR);
   }
   return (SUCCESS);
@@ -161,18 +144,18 @@ ErrorStatus BMx280_Init(BMx280_SensorTypeDef sensorType, BMx280_TransportTypeDef
   * @param  None
   * @return Error status
   */
-ErrorStatus BMx280_Measurment(void) {
+ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef *sensor) {
   uint8_t buf[8];
 
   /* Run conversion in forse mode, keep oversampling */
   buf[0] = BMX280_CTRL_MEAS;
   buf[1] = 0xb5;
-  if (BMx280_Write(bmxItem, buf, 2)) {
+  if (BMx280_Write(sensor, buf, 2)) {
     return (ERROR);
   }
 
   /* Read the status register and check measuring busy flag, wait for conversion */
-  if (BMx280_Read(bmxItem, BMX280_STATUS, buf, 1)) {
+  if (BMx280_Read(sensor, BMX280_STATUS, buf, 1)) {
     return (ERROR);
   }
   if (buf[0] == 0x08) {
@@ -180,7 +163,7 @@ ErrorStatus BMx280_Measurment(void) {
   }
 
   /* Read raw data */
-  if (BMx280_Read(bmxItem, BMX280_DATA, buf, 8)) {
+  if (BMx280_Read(sensor, BMX280_DATA, buf, 8)) {
     return (ERROR);
   }
 
@@ -189,13 +172,13 @@ ErrorStatus BMx280_Measurment(void) {
   BMx280_S32_t adc_H = (buf[6] << 8) | buf[7];
 
   temperature = bmx280_compensate_T_int32(adc_T);
-  // printf("%ld\n", temperature);
+  printf("%ld\n", temperature);
 
   pressure = bmx280_compensate_P_int32(adc_P);
-  // printf("%ld\n", pressure);
+  printf("%ld\n", pressure);
 
   humidity = bmx280_compensate_H_int32(adc_H);
-  // printf("%ld\n", humidity);
+  printf("%ld\n", humidity);
 
   return (SUCCESS);
 }
@@ -211,9 +194,9 @@ ErrorStatus BMx280_Measurment(void) {
   * @param  len: length of the buffer
   * @return Error status
   */
-static ErrorStatus BMx280_Read(BMx280_ItemTypeDef item, uint8_t reg, uint8_t *buf, uint8_t len) {
-  if (item.transportType == BMx280_I2C) {
-    if (I2C_Read(I2C1, BMX280_I2C_ADDR, reg, buf, len)) {
+static ErrorStatus BMx280_Read(BMx280_ItemTypeDef *item, uint8_t reg, uint8_t *buf, uint8_t len) {
+  if (item->busType == BMx280_I2C) {
+    if (I2C_Read(item->bus, BMX280_I2C_ADDR, reg, buf, len)) {
       return (ERROR);
     }
   } else {
@@ -233,9 +216,9 @@ static ErrorStatus BMx280_Read(BMx280_ItemTypeDef item, uint8_t reg, uint8_t *bu
   * @param  len: length of the buffer
   * @return Error status
   */
-static ErrorStatus BMx280_Write(BMx280_ItemTypeDef item, uint8_t *buf, uint8_t len) {
-  if (item.transportType == BMx280_I2C) {
-    if (I2C_Write(I2C1, BMX280_I2C_ADDR, buf, len)) {
+static ErrorStatus BMx280_Write(BMx280_ItemTypeDef *item, uint8_t *buf, uint8_t len) {
+  if (item->busType == BMx280_I2C) {
+    if (I2C_Write(item->bus, BMX280_I2C_ADDR, buf, len)) {
       return (ERROR);
     }
   } else {

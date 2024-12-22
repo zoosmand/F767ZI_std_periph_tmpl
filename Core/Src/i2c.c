@@ -34,7 +34,7 @@ static ErrorStatus I2C_Master_Receive(I2C_TypeDef *I2Cx, uint16_t slaveAddr, uin
 
 ////////////////////////////////////////////////////////////////////////////////
 /**
-  * @brief  Initializes I2C3 peripheral
+  * @brief  Initializes I2C peripheral
   * @param  None
   * @return None
   */
@@ -68,16 +68,11 @@ ErrorStatus I2C_Init(I2C_TypeDef *I2Cx) {
       | (_PUPD_PU << (I2C_2_SCL_Pin_Pos * 2))
     ));
     /* Alternate function */
-    MODIFY_REG(I2C_2_Port->AFR[1], 0x000000ff, (
+    MODIFY_REG(I2C_2_Port->AFR[0], 0x000000ff, (
         (GPIO_AF_4 << (I2C_2_SDA_Pin_Pos * 4))
       | (GPIO_AF_4 << (I2C_2_SCL_Pin_Pos * 4))
-      //   (GPIO_AF_4 << ((I2C_2_SDA_Pin_Pos - 8) * 4))
-      // | (GPIO_AF_4 << ((I2C_2_SCL_Pin_Pos - 8) * 4))
     ));
 
-    /* Due to a undocumented bug, the source clock should be start after the GPIO initialization */
-    Delay(1);
-    PREG_SET(RCC->APB1ENR, RCC_APB1ENR_I2C2EN_Pos);
 
 
     // I2C

@@ -67,8 +67,18 @@ int main(void) {
   /* Init I2C2 and BMx280 Sensor */
   i2c2Status = I2C_Init(I2C2);
 
+  BMx280_ItemTypeDef sensor = {
+    BME280,
+    BMx280_I2C,
+    I2C2
+  };
+
   if (!i2c2Status) {
-    bmx280Status = BMx280_Init(BME280, BMx280_I2C);
+    bmx280Status = BMx280_Init(&sensor);
+  }
+
+  if (!bmx280Status) {
+    BMx280_Measurment(&sensor);
   }
 
 
@@ -425,6 +435,7 @@ void SystemInit(void) {
     | DBGMCU_APB1_FZ_DBG_TIM6_STOP
     | DBGMCU_APB1_FZ_DBG_IWDG_STOP
     | DBGMCU_APB1_FZ_DBG_WWDG_STOP
+    | DBGMCU_APB1_FZ_DBG_I2C2_SMBUS_TIMEOUT
   ));
   #endif
 
@@ -455,7 +466,7 @@ void SystemInit(void) {
   SET_BIT(RCC->APB1ENR, (
       RCC_APB1ENR_TIM6EN
     | RCC_APB1ENR_USART3EN
-    // | RCC_APB1ENR_I2C2EN
+    | RCC_APB1ENR_I2C2EN
   ));
 
   /* AHB1 */

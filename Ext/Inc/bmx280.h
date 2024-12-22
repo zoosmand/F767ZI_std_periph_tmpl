@@ -40,11 +40,12 @@ typedef enum {
 typedef enum {
   BMx280_SPI  = 0,
   BMx280_I2C
-} BMx280_TransportTypeDef;
+} BMx280_BusTypeDef;
 
 typedef struct {  
   BMx280_SensorTypeDef sensorType;
-  BMx280_TransportTypeDef transportType;
+  BMx280_BusTypeDef busType;
+  I2C_TypeDef *bus;
 } BMx280_ItemTypeDef;
 
 #define BMX280_I2C_ADDR   (0x76 << 1)
@@ -70,8 +71,8 @@ typedef uint32_t          BMx280_U32_t;
 extern ErrorStatus bmx280Status;
 
 /* Exported functions prototypes ---------------------------------------------*/
-ErrorStatus BMx280_Init(BMx280_SensorTypeDef sensorType, BMx280_TransportTypeDef transportType);
-ErrorStatus BMx280_Measurment(void);
+ErrorStatus BMx280_Init(BMx280_ItemTypeDef*);
+ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef*);
 
 
 
