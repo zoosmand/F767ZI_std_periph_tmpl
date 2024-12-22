@@ -145,7 +145,7 @@ static void CronSeconds_Handler(void) {
 
 // ---- Minutes ---- //
 static void CronMinutes_Handler(void) {
-  printf("%d seconds left since start\n\n", (int) seconds);
+  printf("%ld seconds left since start\n\n", seconds);
   if (!bmx280Status) {
     static int32_t buf[3];
     if (!BMx280_Measurment(&sensor, buf)) {
