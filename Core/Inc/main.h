@@ -16,7 +16,7 @@
 
 /*** Define debug output to SWO ***/
 // if USART initialization failed SWO output will be passed to ITM
-#define SWO_USART USART2
+#define SWO_USART USART3
 
 /*** Full assert ***/
 #define USE_FULL_ASSERT
@@ -42,11 +42,15 @@ extern "C" {
 #include "tim.h"
 #include "led.h"
 #include "exti.h"
+#include "i2c.h"
 /*** Developer's headers ***/
 #include "d_tim.h"
 #include "d_usart.h"
 #include "d_led.h"
 #include "d_button.h"
+
+/*** Extended devices headers */
+#include "bmx280.h"
 
 /* Exported types ------------------------------------------------------------*/
 struct __FILE {
@@ -94,6 +98,7 @@ extern void Cron_Handler(void);
 
 /* Peripheral initialization statuses ----------------------------------------*/
 extern ErrorStatus swoUsartStatus;
+extern ErrorStatus i2c2Status;
 
 
 #ifdef __cplusplus

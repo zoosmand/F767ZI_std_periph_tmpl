@@ -36,18 +36,8 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-Core/Src/main.c \
-Core/Src/common.c \
-Core/Src/callback.c \
-Core/Src/stm32f7xx_it.c \
-Core/Src/usart.c \
-Core/Src/tim.c \
-Core/Src/led.c \
-Core/Src/exti.c \
-Core/Src/d_tim.c \
-Core/Src/d_usart.c \
-Core/Src/d_led.c \
-Core/Src/d_button.c \
+$(wildcard Core/Src/*.c) \
+$(wildcard Ext/Src/*.c)
 
 
 # ASM sources
@@ -118,6 +108,7 @@ AS_INCLUDES =
 # C includes
 C_INCLUDES =  \
 -ICore/Inc \
+-IExt/Inc \
 -IDrivers/CMSIS/Device/ST/STM32F7xx/Include \
 -IDrivers/CMSIS/Include \
 -IDrivers/CMSIS/Include \

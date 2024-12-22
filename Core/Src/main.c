@@ -33,6 +33,7 @@ RCC_ClocksTypeDef RccClocks;
 
 /* Peripheral initialization statuses ----------------------------------------*/
 ErrorStatus swoUsartStatus = ERROR;
+ErrorStatus i2c2Status = ERROR;
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -61,6 +62,14 @@ int main(void) {
   LED_Init();
   /* EXTI */
   EXTI_Init();
+
+
+  /* Init I2C2 and BMx280 Sensor */
+  i2c2Status = I2C_Init(I2C2);
+
+  if (!i2c2Status) {
+    bmx280Status = BMx280_Init(BME280, BMx280_I2C);
+  }
 
 
   while (1) {
@@ -446,6 +455,7 @@ void SystemInit(void) {
   SET_BIT(RCC->APB1ENR, (
       RCC_APB1ENR_TIM6EN
     | RCC_APB1ENR_USART3EN
+    // | RCC_APB1ENR_I2C2EN
   ));
 
   /* AHB1 */
@@ -453,6 +463,7 @@ void SystemInit(void) {
       RCC_AHB1ENR_GPIOBEN
     | RCC_AHB1ENR_GPIOCEN
     | RCC_AHB1ENR_GPIODEN
+    | RCC_AHB1ENR_GPIOFEN
   ));
 
   /* APB2 */

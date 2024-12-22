@@ -76,8 +76,8 @@ ErrorStatus USART_Init(USART_TypeDef* usart) {
     PREG_SET(USART3->RQR, USART_RQR_RXFRQ_Pos);
 
     // TODO Implement chech if the peripheral is ready. 
-    return SUCCESS;
+    return (SUCCESS);
 
   } 
-  return ERROR;
+  return (ERROR);
 }

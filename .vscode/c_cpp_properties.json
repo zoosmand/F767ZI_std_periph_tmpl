@@ -12,7 +12,7 @@
                 "${workspaceFolder}/Drivers/CMSIS/Include/",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F7xx/Include",
                 "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/Core/Src"
+                "${workspaceFolder}/Ext/Inc"
             ],
             "defines": [
                 "DEBUG",
@@ -59,7 +59,7 @@
                 "${workspaceFolder}/Drivers/CMSIS/Include",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F7xx/Include",
                 "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/Core/Src"
+                "${workspaceFolder}/Ext/Inc"
             ],
             "defines": [
                 "DEBUG",
