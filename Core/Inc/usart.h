@@ -40,7 +40,7 @@
 extern uint32_t _USARTREG_;
 
 /* Exported functions prototypes ---------------------------------------------*/
-void USART_Init(USART_TypeDef *usart);
+ErrorStatus USART_Init(USART_TypeDef *usart);
 
 /* Private defines -----------------------------------------------------------*/
 #define USART_3_TX_Pin              GPIO_PIN_8

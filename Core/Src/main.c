@@ -30,6 +30,11 @@ uint32_t delay_tmp            = 0;
 uint32_t SystemCoreClock      = 16000000;
 RCC_ClocksTypeDef RccClocks;
 
+
+/* Peripheral initialization statuses ----------------------------------------*/
+ErrorStatus swoUsartStatus = ERROR;
+
+
 /* Private function prototypes -----------------------------------------------*/
 static void CronSysQuantum_Handler(void);
 static void CronMillis_Handler(void);
@@ -47,8 +52,9 @@ int main(void) {
   Delay(500);
 
   /****** peripheral initialization *******************/
-  /* USART */ 
-  USART_Init(USART3);
+  /* SWO USART */ 
+  swoUsartStatus = USART_Init(SWO_USART);
+
   /* Basic Timer */
   BasicTimer_Init(TIM6);
   /* LED */

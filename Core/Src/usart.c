@@ -33,7 +33,7 @@ uint32_t _USARTREG_ = 0;
   * @param  usart An USART definition struct 
   * @retval None
   */
-void USART_Init(USART_TypeDef* usart) {
+ErrorStatus USART_Init(USART_TypeDef* usart) {
 
   if (usart == USART3) {
     /** USART3 GPIO Configuration
@@ -75,9 +75,9 @@ void USART_Init(USART_TypeDef* usart) {
     /* Clear RXNE  pernding bit */
     PREG_SET(USART3->RQR, USART_RQR_RXFRQ_Pos);
 
-  }
-  else {
-    // None of USARTs initialization
-    Error_Handler();
-  }
+    // TODO Implement chech if the peripheral is ready. 
+    return SUCCESS;
+
+  } 
+  return ERROR;
 }

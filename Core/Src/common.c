@@ -69,14 +69,12 @@ __STATIC_INLINE uint32_t ITM_SendCharChannel(uint32_t ch, uint32_t channel) {
 __STATIC_INLINE void _putc(uint8_t ch) {
   if (ch == '\n') _putc('\r');
 
-  #ifdef SWO_ITM
+  if (!swoUsartStatus) {
+    SWO_USART->TDR = ch;
+    while (!(PREG_CHECK(SWO_USART->ISR, USART_ISR_TXE_Pos)));
+  } else {
     ITM_SendCharChannel(ch, 0);
-  #endif
-
-  #ifdef SWO_USART
-    USART3->TDR = ch;
-    while (!(PREG_CHECK(USART3->ISR, USART_ISR_TXE_Pos)));
-  #endif
+  }
 }
 
 

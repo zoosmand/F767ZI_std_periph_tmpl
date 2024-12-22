@@ -15,8 +15,8 @@
 #define __MAIN_H
 
 /*** Define debug output to SWO ***/
-// #define SWO_ITM
-#define SWO_USART
+// if USART initialization failed SWO output will be passed to ITM
+#define SWO_USART USART2
 
 /*** Full assert ***/
 #define USE_FULL_ASSERT
@@ -91,6 +91,9 @@ extern void Cron_Handler(void);
 #define _DELAYF_  0 // Delay handler Flag
 
 #define CCMRAM  __attribute__((section(".ccmram")))
+
+/* Peripheral initialization statuses ----------------------------------------*/
+extern ErrorStatus swoUsartStatus;
 
 
 #ifdef __cplusplus
