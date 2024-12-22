@@ -19,6 +19,13 @@ static uint32_t minutes_tmp   = 60;
 // static uint32_t delay_ts = 0;
 static __IO uint32_t btnRattlingStart = 0;
 
+static BMx280_ItemTypeDef sensor = {
+  .sensorType = BME280,
+  .busType = BMx280_I2C,
+  .bus = I2C2
+};
+
+
 
 /* Global variables ----------------------------------------------------------*/
 uint32_t sysQuantum           = 0;
@@ -67,20 +74,9 @@ int main(void) {
   /* Init I2C2 and BMx280 Sensor */
   i2c2Status = I2C_Init(I2C2);
 
-  BMx280_ItemTypeDef sensor = {
-    BME280,
-    BMx280_I2C,
-    I2C2
-  };
-
   if (!i2c2Status) {
     bmx280Status = BMx280_Init(&sensor);
   }
-
-  if (!bmx280Status) {
-    BMx280_Measurment(&sensor);
-  }
-
 
   while (1) {
     Delay_Handler(0);
@@ -149,7 +145,16 @@ static void CronSeconds_Handler(void) {
 
 // ---- Minutes ---- //
 static void CronMinutes_Handler(void) {
-  printf("%d seconds left since start\n", (int) seconds);
+  printf("%d seconds left since start\n\n", (int) seconds);
+  if (!bmx280Status) {
+    static int32_t buf[3];
+    if (!BMx280_Measurment(&sensor, buf)) {
+      printf("%ld.%ld C\n", buf[0]/100, buf[0]&100);
+      printf("%ld.%ld Pa\n", buf[1]/100, buf[1]&100);
+      printf("%ld.%ld%%\n", buf[2]/1000, buf[2]&1000/100);
+    }
+  }
+
 }
 
 

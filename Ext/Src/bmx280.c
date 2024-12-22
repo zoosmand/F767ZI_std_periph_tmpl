@@ -144,7 +144,7 @@ ErrorStatus BMx280_Init(BMx280_ItemTypeDef *sensor) {
   * @param  None
   * @return Error status
   */
-ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef *sensor) {
+ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef *sensor, int32_t *output) {
   uint8_t buf[8];
 
   /* Run conversion in forse mode, keep oversampling */
@@ -171,14 +171,9 @@ ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef *sensor) {
   BMx280_S32_t adc_T = (((buf[3] << 8) | buf[4]) << 4) | (buf[5] >> 4);
   BMx280_S32_t adc_H = (buf[6] << 8) | buf[7];
 
-  temperature = bmx280_compensate_T_int32(adc_T);
-  printf("%ld\n", temperature);
-
-  pressure = bmx280_compensate_P_int32(adc_P);
-  printf("%ld\n", pressure);
-
-  humidity = bmx280_compensate_H_int32(adc_H);
-  printf("%ld\n", humidity);
+  output[0] = bmx280_compensate_T_int32(adc_T);
+  output[1] = bmx280_compensate_P_int32(adc_P);
+  output[2] = bmx280_compensate_H_int32(adc_H);
 
   return (SUCCESS);
 }

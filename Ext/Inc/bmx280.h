@@ -72,7 +72,7 @@ extern ErrorStatus bmx280Status;
 
 /* Exported functions prototypes ---------------------------------------------*/
 ErrorStatus BMx280_Init(BMx280_ItemTypeDef*);
-ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef*);
+ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef*, int32_t*);
 
 
 
