@@ -13,6 +13,7 @@
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F7xx/Include",
                 "${workspaceFolder}/Core/Inc",
                 "${workspaceFolder}/Srv/Inc",
+                "${workspaceFolder}/Ext/Inc",
                 "${workspaceFolder}/FreeRTOS/include",
                 "${workspaceFolder}/FreeRTOS/portable/GCC/ARM_CM7/r0p1"
             ],

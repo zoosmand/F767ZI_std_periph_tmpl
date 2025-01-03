@@ -21,3 +21,7 @@ There are some pending tasks in this project that need to be completed:
 - [ ] Task 3
 
 Feel free to contribute to this project by completing any of the pending tasks or by suggesting improvements.
+
+### Tips
+
+* git checkout --patch std-i2c-bmx280 ./Ext/Src/bmx280.c
