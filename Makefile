@@ -36,26 +36,32 @@ BUILD_DIR = build
 ######################################
 # C sources
 C_SOURCES =  \
-Core/Src/main.c \
-Core/Src/common.c \
-Core/Src/callback.c \
-Core/Src/stm32f7xx_it.c \
-Core/Src/usart.c \
-Core/Src/tim.c \
-Core/Src/led.c \
-Core/Src/exti.c \
-Srv/Src/freertos_srv.c \
-Srv/Src/srv_watchdog.c \
-Srv/Src/srv_logger.c \
-Srv/Src/srv_usart.c \
-Srv/Src/srv_led.c \
-Srv/Src/srv_button.c \
+$(wildcard Core/Src/*.c) \
+$(wildcard Srv/Src/*.c) \
+$(wildcard Ext/Src/*.c) \
 FreeRTOS/tasks.c \
 FreeRTOS/queue.c \
 FreeRTOS/list.c \
 FreeRTOS/timers.c \
 FreeRTOS/portable/GCC/ARM_CM7/r0p1/port.c \
-FreeRTOS/portable/MemMang/heap_4.c \
+FreeRTOS/portable/MemMang/heap_4.c
+
+
+
+# Core/Src/main.c \
+# Core/Src/common.c \
+# Core/Src/callback.c \
+# Core/Src/stm32f7xx_it.c \
+# Core/Src/usart.c \
+# Core/Src/tim.c \
+# Core/Src/led.c \
+# Core/Src/exti.c \
+# Srv/Src/freertos_srv.c \
+# Srv/Src/srv_watchdog.c \
+# Srv/Src/srv_logger.c \
+# Srv/Src/srv_usart.c \
+# Srv/Src/srv_led.c \
+# Srv/Src/srv_button.c \
 
 
 # ASM sources
