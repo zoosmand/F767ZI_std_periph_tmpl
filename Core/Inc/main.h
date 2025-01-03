@@ -42,6 +42,7 @@ extern "C" {
 #include "tim.h"
 #include "led.h"
 #include "exti.h"
+#include "i2c.h"
 #include "bmx280.h"
 /*** FreeRTOS Services ***/
 // #include "freertos_srv.h"

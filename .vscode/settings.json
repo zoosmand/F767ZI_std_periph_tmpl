@@ -1,11 +1,15 @@
 {
     "cmake.configureOnOpen": false,
     "files.associations": {
+        "*.ndjson": "jsonl",
+        "*.dbclient-js": "javascript",
         "stm32f7xx.h": "c",
         "stdlib.h": "c",
         "stdio.h": "c",
         "led.h": "c",
         "main.h": "c",
-        "freertos.h": "c"
+        "freertos.h": "c",
+        "bmx280.h": "c",
+        "exti.h": "c"
     }
 }

@@ -159,7 +159,7 @@ ErrorStatus BMx280_Measurment(BMx280_ItemTypeDef *sensor, int32_t *output) {
     return (ERROR);
   }
   if (buf[0] == 0x08) {
-    Delay(20);
+    _Delay(20);
   }
 
   /* Read raw data */

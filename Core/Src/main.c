@@ -13,10 +13,17 @@
 #include "main.h"
 
 /* Private variables ---------------------------------------------------------*/
+static BMx280_ItemTypeDef sensor = {
+  .sensorType = BME280,
+  .busType = BMx280_I2C,
+  .bus = I2C2
+};
+
 
 /* Global variables ----------------------------------------------------------*/
 uint32_t SystemCoreClock = 16000000; /*!< Defaulf value on start */
 RCC_ClocksTypeDef RccClocks;
+ErrorStatus i2c2Status;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -38,6 +45,14 @@ int main(void) {
   LED_Init();
   /* EXTI */
   EXTI_Init();
+
+  /* Init I2C2 and BMx280 Sensor */
+  i2c2Status = I2C_Init(I2C2);
+
+  if (!i2c2Status) {
+    bmx280Status = BMx280_Init(&sensor);
+  }
+
 
   FreeRTOS_Run();
 
@@ -185,6 +200,7 @@ void SystemInit(void) {
     | DBGMCU_APB1_FZ_DBG_TIM6_STOP
     | DBGMCU_APB1_FZ_DBG_IWDG_STOP
     | DBGMCU_APB1_FZ_DBG_WWDG_STOP
+    | DBGMCU_APB1_FZ_DBG_I2C2_SMBUS_TIMEOUT
   ));
   #endif
 
@@ -215,6 +231,7 @@ void SystemInit(void) {
   SET_BIT(RCC->APB1ENR, (
       RCC_APB1ENR_TIM6EN
     | RCC_APB1ENR_USART3EN
+    | RCC_APB1ENR_I2C2EN
   ));
 
   /* AHB1 */
@@ -222,6 +239,7 @@ void SystemInit(void) {
       RCC_AHB1ENR_GPIOBEN
     | RCC_AHB1ENR_GPIOCEN
     | RCC_AHB1ENR_GPIODEN
+    | RCC_AHB1ENR_GPIOFEN
   ));
 
   /* APB2 */

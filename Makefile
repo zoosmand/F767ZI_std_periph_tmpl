@@ -133,6 +133,7 @@ AS_INCLUDES =
 C_INCLUDES =  \
 -ICore/Inc \
 -ISrv/Inc \
+-IExt/Inc \
 -IDrivers/CMSIS/Device/ST/STM32F7xx/Include \
 -IDrivers/CMSIS/Include \
 -IFreeRTOS/include \
