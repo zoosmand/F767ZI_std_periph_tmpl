@@ -1,12 +1,11 @@
 {
     "cmake.configureOnOpen": false,
     "files.associations": {
-        "*.ndjson": "jsonl",
-        "*.dbclient-js": "javascript",
-        "stm32f7xx.h": "c",
-        "stdlib.h": "c",
-        "stdio.h": "c",
-        "led.h": "c",
-        "exti.h": "c"
-    }
+        "*.c": "c",
+        "*.h": "c",
+        "*.s": "arm",
+        "*.S": "arm",
+        "*.inc": "arm"
+    },
+    "makefile.configureOnOpen": false
 }

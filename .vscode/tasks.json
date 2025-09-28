@@ -6,7 +6,12 @@
         {
             "label": "Make Firmware",
             "type": "shell",
-            "command": "gmake -j$(sysctl -n hw.ncpu) all TARGET=vsarm_firmware GCC_PATH=${env:VSARM}/arm-gcc/bin",
+            "osx": {
+                "command": "gmake -j$(sysctl -n hw.ncpu) all TARGET=vsarm_firmware GCC_PATH=${env:VSARM}/arm-gcc/bin"
+            },
+            "linux": {
+                "command": "gmake -j$(nproc) all TARGET=vsarm_firmware GCC_PATH=${env:VSARM}/arm-gcc/bin"
+            },
             "options": {
                 "cwd": "${workspaceRoot}"
             },
