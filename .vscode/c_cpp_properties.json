@@ -44,7 +44,7 @@
         ],
         "limitSymbolsToIncludedHeaders": false,
         "databaseFilename": ""
-      },
+      }
     },
     {
       "name": "Linux",
